@@ -46,31 +46,32 @@ async function cargarSobreMi() {
         const { data, error } = await _supabase
             .from('sobre_mi')
             .select('*')
-            .limit(1);
+            .eq('id', 1)
+            .single();
 
-        if (error || !data || data.length === 0) return;
+        if (error || !data) return;
 
-        const info = data[0];
-
-        // TEXTO
-        document.getElementById('about-titulo').innerText = info.titulo;
-        document.getElementById('about-desc1').innerText = info.descripcion_1;
-        document.getElementById('about-desc2').innerText = info.descripcion_2;
-
-        // IMAGEN
-        document.getElementById('about-img').src = info.imagen;
-
-        // LISTA (si la agregas luego)
+        
+        const titulo = document.getElementById('about-titulo');
+        const desc1 = document.getElementById('about-desc1');
+        const desc2 = document.getElementById('about-desc2');
+        const img = document.getElementById('about-img');
         const lista = document.getElementById('about-lista');
-        if (lista && info.lista) {
-            lista.innerHTML = info.lista
-                .split(',')
-                .map(item => `<li>${item.trim()}</li>`)
-                .join('');
-        }
+
+        if (!titulo || !desc1 || !desc2 || !img || !lista) return;
+
+
+        titulo.innerText = data.titulo;
+        desc1.innerText = data.descripcion1;
+        desc2.innerText = data.descripcion2;
+        img.src = data.imagen_url;
+
+        lista.innerHTML = data.lista
+            ? data.lista.split(',').map(item => `<li>${item.trim()}</li>`).join('')
+            : '';
 
     } catch (e) {
-        console.log("Error cargando Sobre Mí", e);
+        console.log("Error cargando Sobre Mí");
     }
 }
 
