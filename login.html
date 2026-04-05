@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Admin | Yohana Franceschi</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+
+    <style>
+        body.login-page {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #070b14; /* Forzamos el color oscuro */
+            margin: 0;
+        }
+        .login-container {
+            background: #111827;
+            padding: 40px;
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-container h2 { color: white; margin-bottom: 20px; font-weight: 800; }
+        .login-container h2 span { color: #ff4757; }
+        .login-container input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: white;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #ff4757;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body class="login-page">
+
+    <div class="login-container">
+        <h2>Admin<span>.</span></h2>
+        <form id="login-form">
+            <input type="email" id="email" placeholder="Correo" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit" class="btn-login">Entrar al Dashboard</button>
+        </form>
+        <p style="margin-top: 20px;"><a href="index.html" style="color: #94a3b8; text-decoration: none; font-size: 0.9rem;">← Volver al sitio</a></p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+</body>
+</html>

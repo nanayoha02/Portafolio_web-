@@ -1,0 +1,403 @@
+/* VARIABLES GLOBALES */
+:root {
+    --bg-dark: #070b14;
+    --bg-card: #111827;
+    --primary: #ff4757;
+    --secondary: #ff6b81;
+    --text-white: #ffffff;
+    --text-dim: #94a3b8;
+    --glass: rgba(255, 255, 255, 0.03);
+}
+
+/* RESET GENERAL */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-white);
+    line-height: 1.6;
+    overflow-x: hidden;
+}
+/* AJUSTE DEL HERO */
+.hero {
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: radial-gradient(circle at top right, rgba(255, 71, 87, 0.05), transparent),
+                radial-gradient(circle at bottom left, rgba(64, 94, 251, 0.05), transparent);
+    padding: 0 8%;
+}
+
+.hero-content {
+    max-width: 800px;
+    animation: fadeInUp 1s ease-out;
+}
+
+.badge {
+    background: rgba(255, 71, 87, 0.1);
+    color: var(--primary);
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    display: inline-block;
+}
+
+.hero h1 {
+    font-size: 4rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 25px;
+}
+
+.hero h1 span {
+    color: var(--primary);
+    position: relative;
+}
+
+.hero p {
+    font-size: 1.2rem;
+    color: var(--text-dim);
+    margin-bottom: 40px;
+}
+/* Contenedor de la barra */
+.status-container {
+    margin: 15px 0;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.status-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.status-bar-fill {
+    height: 100%;
+    background: var(--accent-gradient); /* El gradiente que creamos antes */
+    transition: width 0.5s ease-in-out;
+}
+
+/* Para los inputs en línea del admin */
+.admin-grid-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+/* BOTONES */
+.hero-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: white;
+    border: none;
+    padding: 18px 35px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-secondary {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 18px 35px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(255, 71, 87, 0.3); }
+.btn-secondary:hover { background: rgba(255, 255, 255, 0.05); }
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* AJUSTE PARA MÓVILES */
+@media (max-width: 768px) {
+    .hero h1 { font-size: 2.5rem; }
+    .hero-buttons { flex-direction: column; }
+}
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 8%;
+    background: rgba(7, 11, 20, 0.8);
+    backdrop-filter: blur(15px);
+    position: fixed;
+    width: 100%;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.logo { font-weight: 800; font-size: 1.5rem; }
+.logo span { color: var(--primary); }
+
+.nav-links { display: flex; list-style: none; gap: 30px; }
+.nav-links a { text-decoration: none; color: var(--text-dim); font-weight: 600; transition: 0.3s; }
+.nav-links a:hover { color: var(--primary); }
+
+/* SECCIONES */
+.section { padding: 120px 8% 80px; }
+.section-header h2 { font-size: 2.8rem; font-weight: 800; margin-bottom: 40px; text-align: center; }
+
+/* ESTRUCTURA DE HABILIDADES (Basado en tu dibujo) */
+.skills-wrapper {
+    display: grid;
+    grid-template-columns: 280px 1fr; /* Columna lateral */
+    gap: 40px;
+    background: var(--bg-card);
+    padding: 40px;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.skills-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    padding-right: 20px;
+}
+
+.skill-tab {
+    background: transparent;
+    color: var(--text-dim);
+    border: none;
+    text-align: left;
+    padding: 15px 20px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: 0.3s;
+    text-transform: uppercase;
+}
+
+.skill-tab.active, .skill-tab:hover {
+    background: rgba(255, 71, 87, 0.1);
+    color: var(--primary);
+}
+
+/* CIRCULOS DE HABILIDADES (Tu código corregido) */
+.skills-display {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 30px;
+    justify-items: center;
+}
+
+.skill-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.skill-circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: conic-gradient(var(--primary) calc(var(--p) * 1%), #1f2937 0);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.skill-circle:hover { transform: scale(1.1); }
+
+.skill-circle::after {
+    content: "";
+    position: absolute;
+    width: 82px;
+    height: 82px;
+    background: var(--bg-card); /* Ajustado al fondo de la tarjeta */
+    border-radius: 50%;
+}
+
+.skill-circle i, .skill-circle span {
+    position: relative;
+    z-index: 2;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--text-white);
+}
+
+.skill-item p { margin-top: 15px; font-weight: 600; color: var(--text-dim); }
+
+/* FOOTER */
+footer {
+    background: #04060b;
+    padding: 80px 8% 40px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.social-links { display: flex; justify-content: center; gap: 20px; margin: 20px 0; }
+.social-links a { color: var(--text-white); font-size: 1.5rem; transition: 0.3s; }
+.social-links a:hover { color: var(--primary); transform: translateY(-5px); }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+    .skills-wrapper { grid-template-columns: 1fr; }
+    .skills-nav { 
+        flex-direction: row; 
+        overflow-x: auto; 
+        border-right: none; 
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        padding-bottom: 15px;
+    }
+}
+/* --- SECCIÓN DE PROYECTOS (TARJETAS FLOTANTES) --- */
+#proyectos-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); /* Crea las columnas automáticas */
+    gap: 25px;
+    padding: 40px 0;
+}
+
+.project-card {
+    background: var(--bg-card); /* Usa el blanco que definimos antes */
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05); /* Sombra inicial suave */
+}
+
+.project-card:hover {
+    transform: translateY(-12px); /* Efecto flotante */
+    box-shadow: 0 20px 40px rgba(255, 71, 87, 0.15); /* Sombra más fuerte al pasar el mouse */
+    border-color: var(--primary);
+}
+
+.status-bar-bg {
+    width: 100%;
+    height: 8px;
+    background: #eee;
+    border-radius: 10px;
+    margin: 10px 0;
+    overflow: hidden;
+}
+
+.status-bar-fill {
+    height: 100%;
+    background: var(--accent-gradient); /* Tu gradiente rojo/rosa */
+    transition: width 1s ease-in-out;
+}
+/* ==========================================
+   ESTILOS PARA LA GRILLA DE PROYECTOS
+   ========================================== */
+#project-grid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 30px;
+    padding: 40px 0;
+}
+
+.project-card {
+    background: var(--bg-card);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.4s ease, border-color 0.4s ease;
+    height: 100%;
+}
+
+.project-card:hover {
+    transform: translateY(-10px);
+    border-color: var(--primary);
+}
+
+.card-img {
+    height: 200px;
+    width: 100%;
+    overflow: hidden;
+}
+
+.card-img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-body h3 {
+    margin-bottom: 10px;
+    font-size: 1.25rem;
+}
+
+.card-body p {
+    color: var(--text-dim);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: auto; /* Esto alinea las etiquetas abajo */
+}
+
+.tags span {
+    background: rgba(255, 71, 87, 0.1);
+    color: var(--primary);
+    padding: 4px 10px;
+    border-radius: 50px;
+    font-size: 0.7rem;
+    font-weight: 600;
+}
+/* --- Estilos para el Logo --- */
+.logo {
+    text-decoration: none !important; /* Quita el subrayado de enlace */
+    color: white; /* O el color principal de tu texto */
+    font-weight: 800;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    transition: opacity 0.3s ease;
+}
+
+.logo:hover {
+    opacity: 0.8; /* Efecto visual al pasar el mouse */
+}
+
+.logo span {
+    color: #3498db; /* Cambia este color por el de tu marca (el azul/morado que usas) */
+    margin-left: 2px;
+}

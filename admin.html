@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración | Dashboard</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/admin.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/main.js"></script>
+</head>
+<body class="admin-body">
+
+    <header class="admin-header">
+        <div class="header-container">
+            <h1>Dashboard<span>.</span></h1>
+            <button onclick="logout()" class="btn-logout">
+                <i class="fas fa-sign-out-alt"></i> Salir
+            </button>
+        </div>
+    </header>
+
+    <main class="admin-main">
+        <div class="admin-nav-tabs">
+            <button onclick="showTab('tab-proyectos', event)" class="tab-btn active">
+                <i class="fas fa-project-diagram"></i> Proyectos
+            </button>
+            <button onclick="showTab('tab-habilidades', event)" class="tab-btn">
+                <i class="fas fa-chart-pie"></i> Habilidades
+            </button>
+            <button onclick="showTab('tab-contacto', event)" class="tab-btn">
+                <i class="fas fa-address-book"></i> Contacto
+            </button>
+        </div>
+
+        <section id="tab-proyectos" class="tab-content active">
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <h3>Gestionar Proyecto</h3>
+                    <form id="form-proyectos">
+                        <input type="hidden" id="p-id">
+                        <div class="input-group">
+                            <input type="text" id="p-titulo" placeholder="Título del Proyecto" required>
+                        </div>
+                        <div class="input-group">
+                            <textarea id="p-desc" placeholder="Descripción breve" rows="3"></textarea>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="p-tech" placeholder="Tecnologías (Ej: React, Node.js)">
+                        </div>
+                        
+                        <div class="admin-grid-inputs">
+                            <div class="input-group">
+                                <input type="text" id="p-repo" placeholder="URL GitHub">
+                            </div>
+                            <div class="input-group">
+                                <input type="text" id="p-live" placeholder="URL Sitio Web">
+                            </div>
+                        </div>
+
+                        <div class="input-group">
+                            <label for="p-img-file" style="font-size: 0.8rem; color: var(--text-dim);">Imagen del Proyecto (Subir archivo):</label>
+                            <input type="file" id="p-img-file" accept="image/*">
+                        </div>
+
+                        <div class="input-group">
+                            <label>Etapa del Proyecto:</label>
+                            <select id="p-etapa">
+                                <option value="25">En Desarrollo (25%)</option>
+                                <option value="60">Prueba / Beta (60%)</option>
+                                <option value="100">Finalizado (100%)</option>
+                            </select>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> Guardar Proyecto
+                        </button>
+                    </form>
+                </div>
+
+                <div class="admin-card">
+                    <h3>Lista de Proyectos</h3>
+                    <div id="lista-proyectos" class="admin-list">
+                        <p class="loading-text">Cargando proyectos...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-habilidades" class="tab-content">
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <h3>Nueva Habilidad</h3>
+                    <form id="form-habilidades">
+                        <div class="input-group">
+                            <input type="text" id="h-nombre" placeholder="Nombre (Ej: Python)" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="h-porcentaje" placeholder="Porcentaje (0-100)" required>
+                        </div>
+                        <div class="input-group">
+                            <select id="h-categoria">
+                                <option value="Lenguajes">Lenguajes</option>
+                                <option value="Bases de Datos">Bases de Datos</option>
+                                <option value="Herramientas">Herramientas</option>
+                                <option value="Metodologías">Metodologías</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="h-icono" placeholder="Icono (Ej: fab fa-python)">
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-plus"></i> Añadir Habilidad
+                        </button>
+                    </form>
+                </div>
+                <div class="admin-card">
+                    <h3>Habilidades Actuales</h3>
+                    <div id="lista-habilidades" class="admin-list">
+                        <p class="loading-text">Cargando habilidades...</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tab-contacto" class="tab-content">
+            <div class="admin-card">
+                <h3>Redes y Contacto</h3>
+                <form id="form-contacto">
+                    <div class="input-group">
+                        <label>Email Público</label>
+                        <input type="email" id="c-email">
+                    </div>
+                    <div class="input-group">
+                        <label>LinkedIn URL</label>
+                        <input type="text" id="c-linkedin">
+                    </div>
+                    <div class="input-group">
+                        <label>GitHub URL</label>
+                        <input type="text" id="c-github">
+                    </div>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-sync-alt"></i> Actualizar Todo
+                    </button>
+                </form>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/auth.js" defer></script>
+</body>
+</html>
