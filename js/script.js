@@ -48,27 +48,47 @@ async function mostrarProyectos() {
         const imgUrl = p.imagen_url || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600';
 
         return `
-        <article class="project-card">
-            <div class="card-img">
-                <img src="${imgUrl}" alt="${p.titulo}" onerror="this.src='https://via.placeholder.com/600x400?text=Proyecto'">
-            </div>
-            <div class="card-body">
-                <h3>${p.titulo}</h3>
-                <div class="status-container">
-                    <div class="status-info">
-                        <span class="status-badge">${etapa}</span>
-                        <span class="status-percentage">${progreso}%</span>
-                    </div>
-                    <div class="status-bar-bg"><div class="status-bar-fill" style="width: ${progreso}%"></div></div>
-                </div>
-                <p>${p.descripcion || ''}</p>
-                <div class="tags">${p.tecnologias ? p.tecnologias.split(',').map(t => `<span>${t.trim()}</span>`).join('') : ''}</div>
-                <div class="project-links">
-                    ${p.github_url ? `<a href="${p.github_url}" target="_blank"><i class="fab fa-github"></i></a>` : ''}
-                    ${p.web_url ? `<a href="${p.web_url}" target="_blank"><i class="fas fa-external-link-alt"></i></a>` : ''}
-                </div>
-            </div>
-        </article>`;
+<div class="col-md-4">
+  <div class="card h-100">
+
+    <img src="${imgUrl}" class="card-img-top" alt="${p.titulo}"
+         onerror="this.src='https://via.placeholder.com/600x400?text=Proyecto'">
+
+    <div class="card-body d-flex flex-column">
+
+      <h5 class="card-title">${p.titulo}</h5>
+
+      <p class="card-text">${p.descripcion || ''}</p>
+
+      <!-- Progreso -->
+      <div class="mb-3">
+        <small>${etapa} - ${progreso}%</small>
+        <div class="progress">
+          <div class="progress-bar" style="width: ${progreso}%"></div>
+        </div>
+      </div>
+
+      <!-- Tecnologías -->
+      <div class="mb-3">
+        ${p.tecnologias 
+          ? p.tecnologias.split(',').map(t => `<span class="badge bg-secondary me-1">${t.trim()}</span>`).join('') 
+          : ''}
+      </div>
+
+      <!-- Links -->
+      <div class="mt-auto d-flex gap-2">
+        ${p.github_url 
+          ? `<a href="${p.github_url}" target="_blank" class="btn btn-dark btn-sm"><i class="fab fa-github"></i></a>` 
+          : ''}
+        ${p.web_url 
+          ? `<a href="${p.web_url}" target="_blank" class="btn btn-primary btn-sm">Ver</a>` 
+          : ''}
+      </div>
+
+    </div>
+  </div>
+</div>
+`;
     }).join('');
 }
 
