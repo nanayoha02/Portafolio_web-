@@ -12,7 +12,11 @@
     <link rel="stylesheet" href="css/admin.css">
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/main.js"></script>
+
+    <script src="js/main.js" defer></script>
+    <script src="js/script.js" defer></script>
+    <script src="js/auth.js" defer></script>
+    
 </head>
 <body class="admin-body">
 
@@ -35,6 +39,9 @@
             </button>
             <button onclick="showTab('tab-contacto', event)" class="tab-btn">
                 <i class="fas fa-address-book"></i> Contacto
+            </button>
+            <button onclick="showTab('tab-sobre', event)" class="tab-btn">
+                <i class="fas fa-user"></i> Sobre Mí
             </button>
         </div>
 
@@ -96,28 +103,22 @@
             <div class="admin-grid">
                 <div class="admin-card">
                     <h3>Nueva Habilidad</h3>
-                    <form id="form-habilidades">
-                        <div class="input-group">
-                            <input type="text" id="h-nombre" placeholder="Nombre (Ej: Python)" required>
-                        </div>
-                        <div class="input-group">
-                            <input type="number" id="h-porcentaje" placeholder="Porcentaje (0-100)" required>
-                        </div>
-                        <div class="input-group">
-                            <select id="h-categoria">
-                                <option value="Lenguajes">Lenguajes</option>
-                                <option value="Bases de Datos">Bases de Datos</option>
-                                <option value="Herramientas">Herramientas</option>
-                                <option value="Metodologías">Metodologías</option>
-                            </select>
-                        </div>
-                        <div class="input-group">
-                            <input type="text" id="h-icono" placeholder="Icono (Ej: fab fa-python)">
-                        </div>
-                        <button type="submit" class="btn-primary">
-                            <i class="fas fa-plus"></i> Añadir Habilidad
-                        </button>
-                    </form>
+                   <form id="form-habilidad">
+    <input id="nombre" placeholder="Nombre">
+    <input id="porcentaje" type="number" placeholder="Porcentaje">
+
+    <select id="categoria">
+        <option>Lenguajes</option>
+        <option>Bases de Datos</option>
+        <option>Herramientas</option>
+        <option>Metodologías</option>
+    </select>
+
+    <input id="icono" placeholder="fab fa-js">
+
+    <button type="submit" class="btn-primary">Guardar</button>
+    
+</form>
                 </div>
                 <div class="admin-card">
                     <h3>Habilidades Actuales</h3>
@@ -150,6 +151,45 @@
                 </form>
             </div>
         </section>
+        <section id="tab-sobre" class="tab-content">
+    <div class="admin-card">
+        <h3>Editar Sobre Mí</h3>
+
+        <form id="form-sobre">
+            
+            <div class="input-group">
+                <label>Título</label>
+                <input type="text" id="about-titulo-input">
+            </div>
+
+            <div class="input-group">
+                <label>Descripción 1</label>
+                <textarea id="about-desc1-input"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Descripción 2</label>
+                <textarea id="about-desc2-input"></textarea>
+            </div>
+
+            <div class="input-group">
+                <label>Subir Imagen</label>
+                <input type="file" id="about-img-file" accept="image/*">
+            </div>
+
+            <div class="input-group">
+                <label>Lista (separada por comas)</label>
+                <input type="text" id="about-lista-input">
+            </div>
+
+            <button type="submit" class="btn-primary">
+                💾 Guardar Sobre Mí
+            </button>
+
+        </form>
+    </div>
+</section>
+
     </main>
 
     <script src="js/auth.js" defer></script>

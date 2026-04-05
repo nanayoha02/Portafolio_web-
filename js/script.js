@@ -1,20 +1,61 @@
 /**
- * PORTFOLIO - MAIN SCRIPT (Público)
+ * PORTFOLIO - MAIN SCRIPT (Público + Admin)
  */
 
-// --- 1. EFECTO NAVBAR ---
+// ===============================
+// 1. EFECTO NAVBAR
+// ===============================
 window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
     if (navbar) {
-        window.scrollY > 50 ? navbar.classList.add('scrolled') : navbar.classList.remove('scrolled');
+        window.scrollY > 50 
+            ? navbar.classList.add('scrolled') 
+            : navbar.classList.remove('scrolled');
     }
 });
 
-// --- 2. CARGAR REDES SOCIALES (Dinámico) ---
+// ===============================
+// 2. GUARDAR HABILIDAD (ADMIN)
+// ===============================
+document.addEventListener("DOMContentLoaded", () => {
+    const form = document.getElementById("form-habilidad");
+
+    if (!form) return;
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const nombre = document.getElementById("nombre").value;
+        const porcentaje = document.getElementById("porcentaje").value;
+        const categoria = document.getElementById("categoria").value;
+        const icono = document.getElementById("icono").value;
+
+        const { error } = await _supabase
+            .from("habilidades")
+            .insert([{ nombre, porcentaje, categoria, icono }]);
+
+        if (error) {
+            console.error(error);
+            alert("❌ Error al guardar");
+        } else {
+            alert("✅ Guardado correctamente");
+            form.reset();
+        }
+    });
+});
+
+// ===============================
+// 3. REDES SOCIALES
+// ===============================
 async function cargarRedesSociales() {
     try {
-        const { data, error } = await _supabase.from('perfil').select('*').eq('id', 1).single();
-        if (error || !data) return;
+        const { data } = await _supabase
+            .from('perfil')
+            .select('*')
+            .eq('id', 1)
+            .single();
+
+        if (!data) return;
 
         const linkGmail = document.getElementById('link-gmail');
         const linkLinkedin = document.getElementById('link-linkedin');
@@ -25,19 +66,25 @@ async function cargarRedesSociales() {
         if (textEmail) textEmail.innerText = data.email;
         if (linkLinkedin) linkLinkedin.href = data.linkedin;
         if (linkGithub) linkGithub.href = data.github;
-    } catch (e) {
+
+    } catch {
         console.log("Perfil no configurado aún.");
     }
 }
 
-// --- 3. MOSTRAR PROYECTOS ---
+// ===============================
+// 4. PROYECTOS
+// ===============================
 async function mostrarProyectos() {
     const contenedor = document.getElementById('project-grid');
     if (!contenedor) return;
 
-    const { data: proyectos, error } = await _supabase.from('proyectos').select('*').order('created_at', { ascending: false });
+    const { data: proyectos } = await _supabase
+        .from('proyectos')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    if (error) {
+    if (!proyectos) {
         contenedor.innerHTML = '<p>Error al cargar proyectos.</p>';
         return;
     }
@@ -45,14 +92,13 @@ async function mostrarProyectos() {
     contenedor.innerHTML = proyectos.map(p => {
         const progreso = p.progreso || 0;
         const etapa = progreso == 100 ? "Finalizado" : progreso >= 60 ? "Beta" : "En Desarrollo";
-        const imgUrl = p.imagen_url || 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600';
+        const imgUrl = p.imagen_url || 'https://via.placeholder.com/600x400';
 
         return `
 <div class="col-md-4">
   <div class="card h-100">
 
-    <img src="${imgUrl}" class="card-img-top" alt="${p.titulo}"
-         onerror="this.src='https://via.placeholder.com/600x400?text=Proyecto'">
+    <img src="${imgUrl}" class="card-img-top">
 
     <div class="card-body d-flex flex-column">
 
@@ -60,29 +106,22 @@ async function mostrarProyectos() {
 
       <p class="card-text">${p.descripcion || ''}</p>
 
-      <!-- Progreso -->
       <div class="mb-3">
         <small>${etapa} - ${progreso}%</small>
         <div class="progress">
-          <div class="progress-bar" style="width: ${progreso}%"></div>
+          <div class="progress-bar" style="width:${progreso}%"></div>
         </div>
       </div>
 
-      <!-- Tecnologías -->
       <div class="mb-3">
         ${p.tecnologias 
           ? p.tecnologias.split(',').map(t => `<span class="badge bg-secondary me-1">${t.trim()}</span>`).join('') 
           : ''}
       </div>
 
-      <!-- Links -->
       <div class="mt-auto d-flex gap-2">
-        ${p.github_url 
-          ? `<a href="${p.github_url}" target="_blank" class="btn btn-dark btn-sm"><i class="fab fa-github"></i></a>` 
-          : ''}
-        ${p.web_url 
-          ? `<a href="${p.web_url}" target="_blank" class="btn btn-primary btn-sm">Ver</a>` 
-          : ''}
+        ${p.github_url ? `<a href="${p.github_url}" target="_blank" class="btn btn-dark btn-sm"><i class="fab fa-github"></i></a>` : ''}
+        ${p.web_url ? `<a href="${p.web_url}" target="_blank" class="btn btn-primary btn-sm">Ver</a>` : ''}
       </div>
 
     </div>
@@ -92,36 +131,171 @@ async function mostrarProyectos() {
     }).join('');
 }
 
-// --- 4. MOSTRAR HABILIDADES ---
+// ===============================
+// 5. HABILIDADES
+// ===============================
 async function mostrarHabilidades(categoria = 'Lenguajes') {
     const contenedor = document.getElementById('habilidades-container');
     if (!contenedor) return;
 
-    const { data: habilidades } = await _supabase.from('habilidades').select('*').eq('categoria', categoria);
-    
-    contenedor.innerHTML = habilidades && habilidades.length > 0 ? habilidades.map(h => {
+    const { data } = await _supabase
+        .from('habilidades')
+        .select('*')
+        .eq('categoria', categoria);
+
+    if (!data || data.length === 0) {
+        contenedor.innerHTML = '<p>No hay habilidades.</p>';
+        return;
+    }
+
+    contenedor.innerHTML = data.map((h, i) => {
         const p = Math.max(0, Math.min(100, h.porcentaje || 0));
+
         return `
-        <div class="skill-item">
-            <div class="skill-circle" style="--p: ${p}">
+        <div class="skill-card" style="animation-delay:${i * 0.1}s">
+            <div class="skill-icon">
                 <i class="${h.icono || 'fas fa-code'}"></i>
-                <span>${p}%</span>
             </div>
-            <p>${h.nombre}</p>
-        </div>`;
-    }).join('') : '<p>No hay habilidades en esta categoría.</p>';
+            <h4>${h.nombre}</h4>
+            <div class="progress">
+                <div class="progress-bar" style="width:${p}%"></div>
+            </div>
+            <span class="skill-percent">${p}%</span>
+        </div>
+        `;
+    }).join('');
 }
 
-// --- 5. ATAJO LOGIN (Alt + L) ---
-document.addEventListener('keydown', (e) => {
-    if (e.altKey && e.key.toLowerCase() === 'l') window.location.href = 'login.html';
+// ===============================
+// 6. SOBRE MI (ADMIN)
+// ===============================
+async function cargarSobreMiAdmin() {
+    try {
+        const { data } = await _supabase
+            .from('sobre_mi')
+            .select('*')
+            .eq('id', 1)
+            .single();
+
+        if (!data) return;
+
+        const titulo = document.getElementById('about-titulo-input');
+        const desc1 = document.getElementById('about-desc1-input');
+        const desc2 = document.getElementById('about-desc2-input');
+        const lista = document.getElementById('about-lista-input');
+        const preview = document.getElementById('preview-img');
+
+        if (titulo) titulo.value = data.titulo || '';
+        if (desc1) desc1.value = data.descripcion_1 || '';
+        if (desc2) desc2.value = data.descripcion_2 || '';
+        if (lista) lista.value = data.lista || '';
+        if (preview) preview.src = data.imagen || '';
+
+    } catch {
+        console.log("Error admin sobre mí");
+    }
+}
+
+// ===============================
+// 7. PREVIEW IMAGEN
+// ===============================
+document.getElementById("about-img-file")?.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    document.getElementById("preview-img").src = URL.createObjectURL(file);
 });
 
-// --- 6. INICIALIZACIÓN ---
+// ===============================
+// 8. GUARDAR SOBRE MI
+// ===============================
+document.getElementById("form-sobre")?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    let imageUrl = "";
+
+    const file = document.getElementById("about-img-file").files[0];
+
+    if (file) {
+        const fileName = `about-${Date.now()}`;
+
+        await _supabase.storage.from('imagenes').upload(fileName, file);
+
+        const { data } = _supabase.storage
+            .from('imagenes')
+            .getPublicUrl(fileName);
+
+        imageUrl = data.publicUrl;
+    }
+
+    await _supabase
+        .from('sobre_mi')
+        .update({
+            titulo: document.getElementById('about-titulo-input').value,
+            descripcion_1: document.getElementById('about-desc1-input').value,
+            descripcion_2: document.getElementById('about-desc2-input').value,
+            lista: document.getElementById('about-lista-input').value,
+            ...(imageUrl && { imagen: imageUrl })
+        })
+        .eq('id', 1);
+
+    alert("✅ Sobre mí actualizado");
+});
+
+// ===============================
+// 9. SOBRE MI (PÚBLICO)
+// ===============================
+async function cargarSobreMi() {
+    try {
+        const { data } = await _supabase
+            .from('sobre_mi')
+            .select('*')
+            .eq('id', 1)
+            .single();
+
+        if (!data) return;
+
+        const titulo = document.getElementById('about-titulo');
+        const desc1 = document.getElementById('about-desc1');
+        const desc2 = document.getElementById('about-desc2');
+        const img = document.getElementById('about-img');
+        const lista = document.getElementById('about-lista');
+
+        if (titulo) titulo.innerText = data.titulo;
+        if (desc1) desc1.innerText = data.descripcion_1;
+        if (desc2) desc2.innerText = data.descripcion_2;
+        if (img) img.src = data.imagen;
+
+        if (lista) {
+            lista.innerHTML = data.lista
+                ? data.lista.split(',').map(i => `<li>${i.trim()}</li>`).join('')
+                : '';
+        }
+
+    } catch {
+        console.log("Error público sobre mí");
+    }
+}
+
+// ===============================
+// 10. ATAJO LOGIN
+// ===============================
+document.addEventListener('keydown', (e) => {
+    if (e.altKey && e.key.toLowerCase() === 'l') {
+        window.location.href = 'login.html';
+    }
+});
+
+// ===============================
+// 11. INIT
+// ===============================
 window.addEventListener('supabaseReady', () => {
     mostrarProyectos();
     mostrarHabilidades('Lenguajes');
     cargarRedesSociales();
+
+    cargarSobreMiAdmin();
+    cargarSobreMi();
 
     document.querySelectorAll('.skill-tab').forEach(btn => {
         btn.addEventListener('click', () => {
