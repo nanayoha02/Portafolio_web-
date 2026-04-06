@@ -145,35 +145,34 @@ async function mostrarProyectos() {
 }
 
 // ===============================
-// 5. HABILIDADES
+// 5. HABILIDADES (PÚBLICO)
 // ===============================
 async function mostrarHabilidades(categoria = 'Lenguajes') {
     const contenedor = document.getElementById('habilidades-container');
     if (!contenedor) return;
 
-    const { data } = await _supabase
+    // Mostramos un pequeño feedback visual de carga
+    contenedor.innerHTML = '<p class="text-center">Cargando...</p>';
+
+    const { data, error } = await _supabase
         .from('habilidades')
         .select('*')
         .eq('categoria', categoria);
 
-    if (!data || data.length === 0) {
-        contenedor.innerHTML = '<p>No hay habilidades.</p>';
+    if (error || !data || data.length === 0) {
+        contenedor.innerHTML = '<p class="text-center">Aún no hay habilidades en esta categoría.</p>';
         return;
     }
 
     contenedor.innerHTML = data.map((h, i) => {
-        const p = Math.max(0, Math.min(100, h.porcentaje || 0));
-
+        // Usamos el nivel (Junior, Avanzado, etc.) en lugar del porcentaje
         return `
         <div class="skill-card" style="animation-delay:${i * 0.1}s">
             <div class="skill-icon">
                 <i class="${h.icono || 'fas fa-code'}"></i>
             </div>
             <h4>${h.nombre}</h4>
-            <div class="progress">
-                <div class="progress-bar" style="width:${p}%"></div>
-            </div>
-            <span class="skill-percent">${p}%</span>
+            <span class="skill-badge">${h.nivel || 'Aprendiz'}</span>
         </div>
         `;
     }).join('');
