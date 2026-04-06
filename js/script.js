@@ -15,6 +15,7 @@ window.addEventListener('scroll', () => {
 });
 
 // ===============================
+// // ===============================
 // 2. GUARDAR HABILIDAD (ADMIN)
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
@@ -25,21 +26,33 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const nombre = document.getElementById("nombre").value;
-        const porcentaje = document.getElementById("porcentaje").value;
-        const categoria = document.getElementById("categoria").value;
-        const icono = document.getElementById("icono").value;
+        // 1. Capturamos los valores usando los nuevos IDs del HTML
+        const nombre = document.getElementById("h-nombre").value;
+        const nivel = document.getElementById("h-nivel").value; // Cambiado de porcentaje a nivel
+        const categoria = document.getElementById("h-categoria").value;
+        const icono = document.getElementById("h-icono").value;
 
+        // 2. Insertamos en Supabase (asegúrate que la columna en la BD se llame 'nivel')
         const { error } = await _supabase
             .from("habilidades")
-            .insert([{ nombre, porcentaje, categoria, icono }]);
+            .insert([{ 
+                nombre, 
+                nivel, // Enviamos el texto "Junior", "Avanzado", etc.
+                categoria, 
+                icono 
+            }]);
 
         if (error) {
             console.error(error);
-            alert("❌ Error al guardar");
+            alert("❌ Error al guardar: " + error.message);
         } else {
-            alert("✅ Guardado correctamente");
+            alert("✅ ¡Habilidad guardada como tarjeta!");
             form.reset();
+            
+            // 3. ¡IMPORTANTE! Refrescar la lista de tarjetas automáticamente
+            if (typeof cargarHabilidadesAdmin === "function") {
+                cargarHabilidadesAdmin();
+            }
         }
     });
 });
