@@ -151,8 +151,8 @@ async function mostrarHabilidades(categoria = 'Lenguajes') {
     const contenedor = document.getElementById('habilidades-container');
     if (!contenedor) return;
 
-    // Mostramos un pequeño feedback visual de carga
-    contenedor.innerHTML = '<p class="text-center">Cargando...</p>';
+    // Limpiamos y mostramos que estamos cargando
+    contenedor.innerHTML = '<p class="text-center">Cargando habilidades...</p>';
 
     const { data, error } = await _supabase
         .from('habilidades')
@@ -160,12 +160,12 @@ async function mostrarHabilidades(categoria = 'Lenguajes') {
         .eq('categoria', categoria);
 
     if (error || !data || data.length === 0) {
-        contenedor.innerHTML = '<p class="text-center">Aún no hay habilidades en esta categoría.</p>';
+        contenedor.innerHTML = '<p class="text-center">Próximamente más habilidades en esta categoría.</p>';
         return;
     }
 
+    // Renderizamos las tarjetas sin barras ni porcentajes
     contenedor.innerHTML = data.map((h, i) => {
-        // Usamos el nivel (Junior, Avanzado, etc.) en lugar del porcentaje
         return `
         <div class="skill-card" style="animation-delay:${i * 0.1}s">
             <div class="skill-icon">
