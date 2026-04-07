@@ -166,16 +166,20 @@ async function mostrarHabilidades(categoria = 'Lenguajes') {
 
     // Renderizamos las tarjetas sin barras ni porcentajes
     contenedor.innerHTML = data.map((h, i) => {
-        return `
-        <div class="skill-card" style="animation-delay:${i * 0.1}s">
-            <div class="skill-icon">
-                <i class="${h.icono || 'fas fa-code'}"></i>
-            </div>
-            <h4>${h.nombre}</h4>
-            <span class="skill-badge">${h.nivel || 'Aprendiz'}</span>
+    const nivelClass = (h.nivel || "Junior").toLowerCase();
+
+    return `
+    <div class="skill-card" style="animation-delay:${i * 0.1}s">
+        <div class="skill-icon">
+            <i class="${h.icono || 'fas fa-code'}"></i>
         </div>
-        `;
-    }).join('');
+        <h4>${h.nombre}</h4>
+        <span class="skill-badge ${nivelClass}">
+            ${h.nivel || 'Junior'}
+        </span>
+    </div>
+    `;
+}).join('');
 }
 
 // ===============================
