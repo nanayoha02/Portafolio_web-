@@ -63,7 +63,7 @@ async function cargarRedesSociales() {
         document.getElementById('link-gmail')?.setAttribute('href', `mailto:${data.email}`);
         document.getElementById('link-linkedin')?.setAttribute('href', data.linkedin);
         document.getElementById('link-github')?.setAttribute('href', data.github);
-        document.getElementById('text-email') && (textEmail.innerText = data.email);
+        document.getElementById('text-email')?.innerText = data.email;
 
     } catch {
         console.log("Perfil no configurado.");
