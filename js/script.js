@@ -15,7 +15,6 @@ window.addEventListener('scroll', () => {
 });
 
 // ===============================
-// // ===============================
 // 2. GUARDAR HABILIDAD (ADMIN)
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
@@ -26,30 +25,21 @@ document.addEventListener("DOMContentLoaded", () => {
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        // 1. Capturamos los valores usando los nuevos IDs del HTML
         const nombre = document.getElementById("nombre").value;
         const nivel = document.getElementById("nivel-habilidad").value;
         const categoria = document.getElementById("categoria").value;
         const icono = document.getElementById("icono").value;
 
-        // 2. Insertamos en Supabase (asegúrate que la columna en la BD se llame 'nivel')
         const { error } = await _supabase
             .from("habilidades")
-            .insert([{ 
-                nombre, 
-                nivel, // Enviamos el texto "Junior", "Avanzado", etc.
-                categoria, 
-                icono 
-            }]);
+            .insert([{ nombre, nivel, categoria, icono }]);
 
         if (error) {
             console.error(error);
-            alert("❌ Error al guardar: " + error.message);
+            alert("❌ Error: " + error.message);
         } else {
-            alert("✅ ¡Habilidad guardada como tarjeta!");
+            alert("✅ Habilidad guardada");
             form.reset();
-            
-            // 3. ¡IMPORTANTE! Refrescar la lista de tarjetas automáticamente
             if (typeof cargarHabilidadesAdmin === "function") {
                 cargarHabilidadesAdmin();
             }
@@ -70,18 +60,13 @@ async function cargarRedesSociales() {
 
         if (!data) return;
 
-        const linkGmail = document.getElementById('link-gmail');
-        const linkLinkedin = document.getElementById('link-linkedin');
-        const linkGithub = document.getElementById('link-github');
-        const textEmail = document.getElementById('text-email');
-
-        if (linkGmail) linkGmail.href = `mailto:${data.email}`;
-        if (textEmail) textEmail.innerText = data.email;
-        if (linkLinkedin) linkLinkedin.href = data.linkedin;
-        if (linkGithub) linkGithub.href = data.github;
+        document.getElementById('link-gmail')?.setAttribute('href', `mailto:${data.email}`);
+        document.getElementById('link-linkedin')?.setAttribute('href', data.linkedin);
+        document.getElementById('link-github')?.setAttribute('href', data.github);
+        document.getElementById('text-email') && (textEmail.innerText = data.email);
 
     } catch {
-        console.log("Perfil no configurado aún.");
+        console.log("Perfil no configurado.");
     }
 }
 
@@ -108,39 +93,31 @@ async function mostrarProyectos() {
         const imgUrl = p.imagen_url || 'https://via.placeholder.com/600x400';
 
         return `
-<div class="col-md-4">
-  <div class="card h-100">
+        <div class="col-md-4">
+            <div class="card h-100">
+                <img src="${imgUrl}" class="card-img-top">
+                <div class="card-body d-flex flex-column">
+                    <h5>${p.titulo}</h5>
+                    <p>${p.descripcion || ''}</p>
 
-    <img src="${imgUrl}" class="card-img-top">
+                    <small>${etapa} - ${progreso}%</small>
+                    <div class="progress mb-2">
+                        <div class="progress-bar" style="width:${progreso}%"></div>
+                    </div>
 
-    <div class="card-body d-flex flex-column">
+                    <div class="mb-2">
+                        ${p.tecnologias 
+                            ? p.tecnologias.split(',').map(t => `<span class="badge bg-secondary me-1">${t.trim()}</span>`).join('')
+                            : ''}
+                    </div>
 
-      <h5 class="card-title">${p.titulo}</h5>
-
-      <p class="card-text">${p.descripcion || ''}</p>
-
-      <div class="mb-3">
-        <small>${etapa} - ${progreso}%</small>
-        <div class="progress">
-          <div class="progress-bar" style="width:${progreso}%"></div>
-        </div>
-      </div>
-
-      <div class="mb-3">
-        ${p.tecnologias 
-          ? p.tecnologias.split(',').map(t => `<span class="badge bg-secondary me-1">${t.trim()}</span>`).join('') 
-          : ''}
-      </div>
-
-      <div class="mt-auto d-flex gap-2">
-        ${p.github_url ? `<a href="${p.github_url}" target="_blank" class="btn btn-dark btn-sm"><i class="fab fa-github"></i></a>` : ''}
-        ${p.web_url ? `<a href="${p.web_url}" target="_blank" class="btn btn-primary btn-sm">Ver</a>` : ''}
-      </div>
-
-    </div>
-  </div>
-</div>
-`;
+                    <div class="mt-auto d-flex gap-2">
+                        ${p.github_url ? `<a href="${p.github_url}" target="_blank" class="btn btn-dark btn-sm"><i class="fab fa-github"></i></a>` : ''}
+                        ${p.web_url ? `<a href="${p.web_url}" target="_blank" class="btn btn-primary btn-sm">Ver</a>` : ''}
+                    </div>
+                </div>
+            </div>
+        </div>`;
     }).join('');
 }
 
@@ -151,35 +128,28 @@ async function mostrarHabilidades(categoria = 'Lenguajes') {
     const contenedor = document.getElementById('habilidades-container');
     if (!contenedor) return;
 
-    // Limpiamos y mostramos que estamos cargando
-    contenedor.innerHTML = '<p class="text-center">Cargando habilidades...</p>';
+    contenedor.innerHTML = '<p>Cargando...</p>';
 
-    const { data, error } = await _supabase
+    const { data } = await _supabase
         .from('habilidades')
         .select('*')
         .eq('categoria', categoria);
 
-    if (error || !data || data.length === 0) {
-        contenedor.innerHTML = '<p class="text-center">Próximamente más habilidades en esta categoría.</p>';
+    if (!data || data.length === 0) {
+        contenedor.innerHTML = '<p>Sin habilidades aún.</p>';
         return;
     }
 
-    // Renderizamos las tarjetas sin barras ni porcentajes
     contenedor.innerHTML = data.map((h, i) => {
-    const nivelClass = (h.nivel || "Junior").toLowerCase();
+        const nivelClass = (h.nivel || "Junior").toLowerCase();
 
-    return `
-    <div class="skill-card" style="animation-delay:${i * 0.1}s">
-        <div class="skill-icon">
+        return `
+        <div class="skill-card" style="animation-delay:${i * 0.1}s">
             <i class="${h.icono || 'fas fa-code'}"></i>
-        </div>
-        <h4>${h.nombre}</h4>
-        <span class="skill-badge ${nivelClass}">
-            ${h.nivel || 'Junior'}
-        </span>
-    </div>
-    `;
-}).join('');
+            <h4>${h.nombre}</h4>
+            <span class="skill-badge ${nivelClass}">${h.nivel}</span>
+        </div>`;
+    }).join('');
 }
 
 // ===============================
@@ -195,17 +165,14 @@ async function cargarSobreMiAdmin() {
 
         if (!data) return;
 
-        const titulo = document.getElementById('about-titulo-input');
-        const desc1 = document.getElementById('about-desc1-input');
-        const desc2 = document.getElementById('about-desc2-input');
-        const lista = document.getElementById('about-lista-input');
-        const preview = document.getElementById('preview-img');
+        document.getElementById('about-titulo-input').value = data.titulo || '';
+        document.getElementById('about-desc1-input').value = data.descripcion_1 || '';
+        document.getElementById('about-desc2-input').value = data.descripcion_2 || '';
+        document.getElementById('about-lista-input').value = data.lista || '';
 
-        if (titulo) titulo.value = data.titulo || '';
-        if (desc1) desc1.value = data.descripcion_1 || '';
-        if (desc2) desc2.value = data.descripcion_2 || '';
-        if (lista) lista.value = data.lista || '';
-        if (preview) preview.src = data.imagen || '';
+        if (data.imagen) {
+            document.getElementById('preview-img').src = data.imagen;
+        }
 
     } catch {
         console.log("Error admin sobre mí");
@@ -217,9 +184,9 @@ async function cargarSobreMiAdmin() {
 // ===============================
 document.getElementById("about-img-file")?.addEventListener("change", (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-
-    document.getElementById("preview-img").src = URL.createObjectURL(file);
+    if (file) {
+        document.getElementById("preview-img").src = URL.createObjectURL(file);
+    }
 });
 
 // ===============================
@@ -229,23 +196,29 @@ document.getElementById("form-sobre")?.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     let imageUrl = "";
-
     const file = document.getElementById("about-img-file").files[0];
 
     if (file) {
-        const fileName = `about-${Date.now()}`;
+        const ext = file.name.split('.').pop();
+        const fileName = `about-${Date.now()}.${ext}`;
 
         const { error: uploadError } = await _supabase.storage
-          .from('imagenes')
-          .upload(fileName, file);
+            .from('imagenes')
+            .upload(fileName, file);
 
-       if (uploadError) {
-          console.error(uploadError);
-         alert("Error subiendo imagen: " + uploadError.message);
-        return;
-}
+        if (uploadError) {
+            alert(uploadError.message);
+            return;
+        }
 
-    await _supabase
+        const { data } = _supabase.storage
+            .from('imagenes')
+            .getPublicUrl(fileName);
+
+        imageUrl = data.publicUrl;
+    }
+
+    const { error } = await _supabase
         .from('sobre_mi')
         .update({
             titulo: document.getElementById('about-titulo-input').value,
@@ -256,7 +229,11 @@ document.getElementById("form-sobre")?.addEventListener("submit", async (e) => {
         })
         .eq('id', 1);
 
-    alert("✅ Sobre mí actualizado");
+    if (error) {
+        alert(error.message);
+    } else {
+        alert("✅ Actualizado");
+    }
 });
 
 // ===============================
@@ -272,17 +249,12 @@ async function cargarSobreMi() {
 
         if (!data) return;
 
-        const titulo = document.getElementById('about-titulo');
-        const desc1 = document.getElementById('about-desc1');
-        const desc2 = document.getElementById('about-desc2');
-        const img = document.getElementById('about-img');
+        document.getElementById('about-titulo')?.innerText = data.titulo;
+        document.getElementById('about-desc1')?.innerText = data.descripcion_1;
+        document.getElementById('about-desc2')?.innerText = data.descripcion_2;
+        document.getElementById('about-img')?.setAttribute('src', data.imagen);
+
         const lista = document.getElementById('about-lista');
-
-        if (titulo) titulo.innerText = data.titulo;
-        if (desc1) desc1.innerText = data.descripcion_1;
-        if (desc2) desc2.innerText = data.descripcion_2;
-        if (img) img.src = data.imagen;
-
         if (lista) {
             lista.innerHTML = data.lista
                 ? data.lista.split(',').map(i => `<li>${i.trim()}</li>`).join('')
@@ -290,27 +262,17 @@ async function cargarSobreMi() {
         }
 
     } catch {
-        console.log("Error público sobre mí");
+        console.log("Error público");
     }
 }
 
 // ===============================
-// 10. ATAJO LOGIN
-// ===============================
-document.addEventListener('keydown', (e) => {
-    if (e.altKey && e.key.toLowerCase() === 'l') {
-        window.location.href = 'login.html';
-    }
-});
-
-// ===============================
-// 11. INIT
+// 10. INIT
 // ===============================
 window.addEventListener('supabaseReady', () => {
     mostrarProyectos();
     mostrarHabilidades('Lenguajes');
     cargarRedesSociales();
-
     cargarSobreMiAdmin();
     cargarSobreMi();
 
