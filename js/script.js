@@ -235,13 +235,15 @@ document.getElementById("form-sobre")?.addEventListener("submit", async (e) => {
     if (file) {
         const fileName = `about-${Date.now()}`;
 
-        await _supabase.storage.from('imagenes').upload(fileName, file);
-         const { data: publicUrlData } = _supabase.storage
-           .from('imagenes')
-           .getPublicUrl(fileName);
+        const { error: uploadError } = await _supabase.storage
+          .from('imagenes')
+          .upload(fileName, file);
 
-         imageUrl = publicUrlData.publicUrl;
-    }
+       if (uploadError) {
+          console.error(uploadError);
+         alert("Error subiendo imagen: " + uploadError.message);
+        return;
+}
 
     await _supabase
         .from('sobre_mi')
