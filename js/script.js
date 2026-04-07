@@ -27,10 +27,10 @@ document.addEventListener("DOMContentLoaded", () => {
         e.preventDefault();
 
         // 1. Capturamos los valores usando los nuevos IDs del HTML
-        const nombre = document.getElementById("h-nombre").value;
-        const nivel = document.getElementById("h-nivel").value; // Cambiado de porcentaje a nivel
-        const categoria = document.getElementById("h-categoria").value;
-        const icono = document.getElementById("h-icono").value;
+        const nombre = document.getElementById("nombre").value;
+        const nivel = document.getElementById("nivel-habilidad").value;
+        const categoria = document.getElementById("categoria").value;
+        const icono = document.getElementById("icono").value;
 
         // 2. Insertamos en Supabase (asegúrate que la columna en la BD se llame 'nivel')
         const { error } = await _supabase
