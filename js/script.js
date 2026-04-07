@@ -236,12 +236,11 @@ document.getElementById("form-sobre")?.addEventListener("submit", async (e) => {
         const fileName = `about-${Date.now()}`;
 
         await _supabase.storage.from('imagenes').upload(fileName, file);
+         const { data: publicUrlData } = _supabase.storage
+           .from('imagenes')
+           .getPublicUrl(fileName);
 
-        const { data } = _supabase.storage
-            .from('imagenes')
-            .getPublicUrl(fileName);
-
-        imageUrl = data.publicUrl;
+         imageUrl = publicUrlData.publicUrl;
     }
 
     await _supabase
