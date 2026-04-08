@@ -5,16 +5,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Administración | Dashboard</title>
-    
+
+    <!-- 🔥 SUPABASE PRIMERO -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+
+    <!-- 🔐 VALIDACIÓN DE USUARIO -->
     <script>
     window.addEventListener("supabaseReady", async () => {
-        const { data } = await _supabase.auth.getUser();
-        if (!data.user) {
-            window.location.href = "login.html";
+        try {
+            const { data } = await _supabase.auth.getUser();
+            if (!data.user) {
+                window.location.href = "login.html";
+            } else {
+                document.getElementById("user-email").innerText = data.user.email;
+            }
+        } catch (err) {
+            console.error("Error auth:", err);
         }
     });
     </script>
 
+    <!-- ESTILOS -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -22,8 +34,7 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/admin.css">
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+    <!-- 🔥 TUS SCRIPTS (DESPUÉS DE CONFIG) -->
     <script src="js/main.js" defer></script>
     <script src="js/script.js" defer></script>
     <script src="js/auth.js" defer></script>
@@ -100,8 +111,7 @@
                     <div class="card-header">
                         <h3><i class="fas fa-list"></i> Lista de Proyectos</h3>
                     </div>
-                    <div id="lista-proyectos" class="admin-list-container">
-                        </div>
+                    <div id="lista-proyectos" class="admin-list-container"></div>
                 </div>
             </div>
         </section>
@@ -144,8 +154,7 @@
                     <div class="card-header">
                         <h3><i class="fas fa-th"></i> Tus Skills</h3>
                     </div>
-                    <div id="lista-habilidades" class="skills-admin-grid">
-                        </div>
+                    <div id="lista-habilidades" class="skills-admin-grid"></div>
                 </div>
             </div>
         </section>
@@ -185,19 +194,19 @@
                     </div>
                     <div class="input-group">
                         <label>Descripción Principal</label>
-                        <textarea id="about-desc1-input" rows="4" placeholder="Cuéntales quién eres..."></textarea>
+                        <textarea id="about-desc1-input" rows="4"></textarea>
                     </div>
                     <div class="input-group">
                         <label>Descripción Secundaria</label>
-                        <textarea id="about-desc2-input" rows="3" placeholder="Tus metas o enfoques..."></textarea>
+                        <textarea id="about-desc2-input" rows="3"></textarea>
                     </div>
                     <div class="input-group">
                         <label>Foto de Perfil</label>
                         <input type="file" id="about-img-file">
                     </div>
                     <div class="input-group">
-                        <label>Palabras Clave (separadas por coma)</label>
-                        <input type="text" id="about-lista-input" placeholder="Innovación, Detalle, Código Limpio">
+                        <label>Palabras Clave</label>
+                        <input type="text" id="about-lista-input">
                     </div>
                     <button type="submit" class="btn-primary">Guardar Perfil</button>
                 </form>
