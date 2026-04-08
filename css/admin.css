@@ -362,7 +362,7 @@ input:focus, select:focus, textarea:focus {
 /* Inputs corregidos */
 input, select, textarea {
     background: #070b14;
-    border: 1px solid #374151;
+    border: 1px solid #dce0e4;
     color: white;
     padding: 12px;
     border-radius: 10px;
