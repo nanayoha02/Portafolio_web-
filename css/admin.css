@@ -337,20 +337,3 @@ input:focus, select:focus, textarea:focus {
     padding: 8px;
     font-size: 0.8rem;
 }
-/* ==================================
-   FIX: Títulos de Proyectos
-   ================================== */
-.card-body .card-title {
-    color: var(--primary) !important; /* Usa el rosa de tus variables */
-    font-size: 1.4rem;
-    font-weight: 800;
-    margin-bottom: 15px;
-    display: block;
-}
-
-/* Mejora también el texto de la descripción para que no sea tan oscuro */
-.card-body .card-text {
-    color: var(--text-dim) !important;
-    line-height: 1.5;
-    font-size: 0.95rem;
-}
