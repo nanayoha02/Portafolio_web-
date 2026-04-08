@@ -507,3 +507,6 @@ h3, .proyecto-titulo {
 p, .proyecto-descripcion {
     color: #e0e0e0; /* Un gris muy claro para que no canse la vista */
 }
+.card-title {
+    color: #ff85a1; /* O el código exacto de rosa que usaste en "Yohana" */
+}
