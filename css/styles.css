@@ -354,3 +354,27 @@ footer {
     background: rgba(255, 143, 171, 0.1) !important;
     transform: translateY(-3px);
 }
+/* =========================================
+   FIX DE COLOR PARA TÍTULOS DE PROYECTOS
+   ========================================= */
+.card-body h5, 
+.card-body .card-title {
+    color: #ffffff !important; /* Cambia a blanco puro */
+    font-weight: 700 !important;
+    font-size: 1.25rem !important;
+    margin-bottom: 12px !important;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3); /* Un poco de profundidad */
+}
+
+/* Si prefieres que el título sea rosa como tu marca: */
+/*
+.card-body h5 {
+    color: var(--primary) !important; 
+}
+*/
+
+/* Mejorar el contraste de la descripción */
+.card-text {
+    color: rgba(255, 255, 255, 0.8) !important; /* Blanco suave para que sea legible */
+    font-size: 0.95rem !important;
+}
