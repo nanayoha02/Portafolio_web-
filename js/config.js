@@ -1,11 +1,14 @@
 // CONFIGURACIÓN DE CONEXIÓN CON SUPABASE
-// Asegúrate de que estos valores coincidan con tu proyecto 'sharehubProyecto'
 
 const SUPABASE_URL = 'https://hydpocjkzsrsfbwgdodi.supabase.co'; 
-const SUPABASE_KEY = 'sb_publishable_HnGLMO92-LnYnnPhFIYkEQ__NGTp_SJ'; // <--- Verifica que sea la 'anon public'
 
-// Inicializamos el cliente de Supabase
-// Usamos _supabase (con guion bajo) para evitar conflictos con la librería
-const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// 🔥 REEMPLAZA ESTA KEY POR LA REAL (anon public)
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh5ZHBvY2prenNyc2Zid2dkb2RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzUxNjIwMDQsImV4cCI6MjA5MDczODAwNH0.-zZ9hjL7__-7XY66zTmGmbjDS-6DSRq9Ya5chO-9xY4';
 
-console.log("Conexión con Supabase inicializada correctamente.");
+// Inicializamos Supabase
+window._supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+console.log("✅ Supabase conectado");
+
+// 🔥 ESTO SOLUCIONA QUE TODO CARGUE
+window.dispatchEvent(new Event('supabaseReady'));
