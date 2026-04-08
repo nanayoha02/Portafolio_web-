@@ -135,6 +135,9 @@ async function mostrarProyectos() {
 // ===============================
 // 4. HABILIDADES
 // ===============================
+// ===============================
+// 4. HABILIDADES (CORREGIDO)
+// ===============================
 async function mostrarHabilidades(categoria = 'Lenguajes') {
     const contenedor = document.getElementById('habilidades-container');
     if (!contenedor) return;
@@ -154,13 +157,12 @@ async function mostrarHabilidades(categoria = 'Lenguajes') {
             return;
         }
 
+   
         contenedor.innerHTML = data.map((h, i) => `
             <div class="skill-card" style="animation-delay:${i * 0.1}s">
                 <i class="${h.icono || 'fas fa-code'}"></i>
                 <h4>${h.nombre}</h4>
-                <span class="skill-badge ${(h.nivel || "junior").toLowerCase()}">
-                    ${h.nivel}
-                </span>
+                <p class="skill-level">${h.nivel || ""}</p> 
             </div>
         `).join('');
 
@@ -169,7 +171,6 @@ async function mostrarHabilidades(categoria = 'Lenguajes') {
         contenedor.innerHTML = '<p>Error al cargar habilidades.</p>';
     }
 }
-
 // ===============================
 // 5. SOBRE MI
 // ===============================
