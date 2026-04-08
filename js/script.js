@@ -60,9 +60,9 @@ async function cargarRedesSociales() {
 
         if (!data) return;
 
-        document.getElementById('link-gmail')?.setAttribute('href', `mailto:${data.email}`);
-        document.getElementById('link-linkedin')?.setAttribute('href', data.linkedin);
-        document.getElementById('link-github')?.setAttribute('href', data.github);
+        document.getElementById('link-gmail')?.href = `mailto:${data.email}`;
+        document.getElementById('link-linkedin')?.href = data.linkedin;
+        document.getElementById('link-github')?.href = data.github;
         document.getElementById('text-email')?.innerText = data.email;
 
     } catch {
@@ -90,7 +90,6 @@ async function mostrarProyectos() {
     contenedor.innerHTML = proyectos.map(p => {
         const progreso = p.progreso || 0;
 
-        // ✅ CORREGIDO (antes fallaba)
         let etapa;
         if (progreso === 100) {
             etapa = "Finalizado";
@@ -132,7 +131,7 @@ async function mostrarProyectos() {
 }
 
 // ===============================
-// 5. HABILIDADES (PÚBLICO)
+// 5. HABILIDADES
 // ===============================
 async function mostrarHabilidades(categoria = 'Lenguajes') {
     const contenedor = document.getElementById('habilidades-container');
@@ -150,16 +149,13 @@ async function mostrarHabilidades(categoria = 'Lenguajes') {
         return;
     }
 
-    contenedor.innerHTML = data.map((h, i) => {
-        const nivelClass = (h.nivel || "Junior").toLowerCase();
-
-        return `
+    contenedor.innerHTML = data.map((h, i) => `
         <div class="skill-card" style="animation-delay:${i * 0.1}s">
             <i class="${h.icono || 'fas fa-code'}"></i>
             <h4>${h.nombre}</h4>
-            <span class="skill-badge ${nivelClass}">${h.nivel}</span>
-        </div>`;
-    }).join('');
+            <span class="skill-badge ${(h.nivel || "junior").toLowerCase()}">${h.nivel}</span>
+        </div>
+    `).join('');
 }
 
 // ===============================
@@ -200,7 +196,7 @@ document.getElementById("about-img-file")?.addEventListener("change", (e) => {
 });
 
 // ===============================
-// 8. GUARDAR SOBRE MI
+// 8. GUARDAR SOBRE MI (CORREGIDO)
 // ===============================
 document.getElementById("form-sobre")?.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -213,7 +209,7 @@ document.getElementById("form-sobre")?.addEventListener("submit", async (e) => {
         const fileName = `about-${Date.now()}.${ext}`;
 
         const { error: uploadError } = await _supabase.storage
-            .from('imagenes')
+            .from('proyectos-imagenes') // ✅ CORREGIDO
             .upload(fileName, file);
 
         if (uploadError) {
@@ -222,7 +218,7 @@ document.getElementById("form-sobre")?.addEventListener("submit", async (e) => {
         }
 
         const { data } = _supabase.storage
-            .from('imagenes')
+            .from('proyectos-imagenes') // ✅ CORREGIDO
             .getPublicUrl(fileName);
 
         imageUrl = data.publicUrl;
@@ -262,7 +258,7 @@ async function cargarSobreMi() {
         document.getElementById('about-titulo')?.innerText = data.titulo;
         document.getElementById('about-desc1')?.innerText = data.descripcion_1;
         document.getElementById('about-desc2')?.innerText = data.descripcion_2;
-        document.getElementById('about-img')?.setAttribute('src', data.imagen);
+        document.getElementById('about-img')?.src = data.imagen;
 
         const lista = document.getElementById('about-lista');
         if (lista) {
