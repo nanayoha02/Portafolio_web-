@@ -510,3 +510,8 @@ p, .proyecto-descripcion {
 .card-title {
     color: #ff85a1; /* O el código exacto de rosa que usaste en "Yohana" */
 }
+/* Busca la clase de tus títulos, probablemente sea algo así: */
+.proyecto-item h3, .project-card h3 {
+    color: #FFFFFF !important;
+    font-weight: 700; /* Para que se vea más robusto */
+}
