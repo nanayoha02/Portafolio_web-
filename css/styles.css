@@ -498,3 +498,12 @@ p {
     transform: scale(1.2);
     color: #a78bfa;
 }
+/* Para los títulos de los proyectos */
+h3, .proyecto-titulo {
+    color: #ffffff; /* Blanco puro */
+}
+
+/* Para la descripción (el texto que no se ve) */
+p, .proyecto-descripcion {
+    color: #e0e0e0; /* Un gris muy claro para que no canse la vista */
+}
