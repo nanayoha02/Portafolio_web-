@@ -89,7 +89,17 @@ async function mostrarProyectos() {
 
     contenedor.innerHTML = proyectos.map(p => {
         const progreso = p.progreso || 0;
-        const etapa = progreso == 100 ? "Finalizado" : progreso >= 60 ? "Beta" : "En Desarrollo";
+
+        // ✅ CORREGIDO (antes fallaba)
+        let etapa;
+        if (progreso === 100) {
+            etapa = "Finalizado";
+        } else if (progreso >= 60) {
+            etapa = "Beta";
+        } else {
+            etapa = "En Desarrollo";
+        }
+
         const imgUrl = p.imagen_url || 'https://via.placeholder.com/600x400';
 
         return `
