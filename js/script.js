@@ -238,3 +238,4 @@ document.addEventListener('keydown', (e) => {
         window.location.href = 'login.html'; // Asegúrate de que el nombre del archivo sea correcto
     }
 });
+
