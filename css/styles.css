@@ -71,6 +71,18 @@ body {
 .nav-links a:hover { color: var(--primary); }
 
 /* =========================================
+   ESPACIADO PARA SECCIONES (DEBIDO AL NAVBAR FIJO)
+   ========================================= */
+body {
+    padding-top: 80px; /* Ajusta este valor según la altura de tu navbar */
+}
+
+
+.section, main {
+    padding-top: 100px !important;
+}
+
+/* =========================================
    TARJETAS DE PROYECTOS (EL FIX DEL COLOR)
    ========================================= */
 .card {
