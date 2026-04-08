@@ -72,7 +72,7 @@ function showTab(tabId, event) {
 }
 
 // --- 3. INICIALIZACIÓN ---
-window.addEventListener('supabaseReady', () => {
+window.addEventListener('DOMContentLoaded', () => {
     if (document.getElementById('login-form')) manejarLogin();
 
     if (window.location.pathname.includes('admin.html')) {
@@ -80,7 +80,10 @@ window.addEventListener('supabaseReady', () => {
             window.location.href = 'login.html';
             return;
         }
+
         cargarDatosAdmin();
+
+        
 
         // GUARDAR PROYECTO
         document.getElementById('form-proyectos')?.addEventListener('submit', async (e) => {
