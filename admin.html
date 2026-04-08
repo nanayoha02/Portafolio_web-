@@ -11,20 +11,17 @@
     <script src="js/config.js"></script>
 
     <!-- 🔐 VALIDACIÓN DE USUARIO -->
-    <script>
-    window.addEventListener("supabaseReady", async () => {
-        try {
-            const { data } = await _supabase.auth.getUser();
-            if (!data.user) {
-                window.location.href = "login.html";
-            } else {
-                document.getElementById("user-email").innerText = data.user.email;
-            }
-        } catch (err) {
-            console.error("Error auth:", err);
-        }
-    });
-    </script>
+   <script>
+window.addEventListener("supabaseReady", async () => {
+    const { data: { session } } = await _supabase.auth.getSession();
+
+    if (!session) {
+        window.location.href = "login.html";
+    } else {
+        document.getElementById("user-email").innerText = session.user.email;
+    }
+});
+</script>
 
     <!-- ESTILOS -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
