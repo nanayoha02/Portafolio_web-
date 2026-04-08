@@ -228,3 +228,13 @@ window.addEventListener('load', () => {
         });
     });
 });
+// ===============================
+// 7. ATAJOS DE TECLADO (Navegación)
+// ===============================
+document.addEventListener('keydown', (e) => {
+    // Verifica si se presiona Alt + L (minúscula o mayúscula)
+    if (e.altKey && (e.key === 'l' || e.key === 'L')) {
+        e.preventDefault(); // Evita comportamientos extraños del navegador
+        window.location.href = 'login.html'; // Asegúrate de que el nombre del archivo sea correcto
+    }
+});
