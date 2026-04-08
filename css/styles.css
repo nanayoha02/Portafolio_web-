@@ -69,6 +69,24 @@ body {
 }
 
 .nav-links a:hover { color: var(--primary); }
+/* Ajuste para que el contenido no quede debajo de la Navbar */
+.hero-section, 
+header.intro {
+    padding-top: 140px !important; /* Aumenta este número si quieres que baje más */
+    padding-bottom: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Asegura que el título H1 tenga espacio */
+.hero-section h1 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
 
 /* =========================================
    ESPACIADO PARA SECCIONES (DEBIDO AL NAVBAR FIJO)
