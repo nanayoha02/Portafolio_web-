@@ -1,112 +1,121 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yohana Franceschi | Portafolio</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    
-    <link rel="icon" href="img/favicon.png" type="image/png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Portafolio de Yohana Franceschi - Desarrolladora de Software enfocada en soluciones digitales y diseño impecable.">
+  <meta name="keywords" content="Yohana Franceschi, desarrolladora, software, portafolio, Chiriquí, Panamá">
+  <meta name="author" content="Yohana Franceschi">
+  <meta property="og:title" content="Yohana Franceschi | Portafolio">
+  <meta property="og:description" content="Desarrolladora de Software enfocada en soluciones digitales y diseño impecable.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#1a1a2e">
+  <title>Yohana Franceschi | Portafolio</title>
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <link rel="icon" href="img/favicon.png" type="image/png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
 
-    <nav class="navbar navbar-expand-lg fixed-top">
-        <div class="container">
-            <a href="index.html" class="logo navbar-brand">
-                YOHANA FRANCESCHI<span>.</span>
-            </a>
+  <nav class="navbar navbar-expand-lg fixed-top">
+    <div class="container">
+      <a href="index.html" class="logo navbar-brand">
+        YOHANA FRANCESCHI<span>.</span>
+      </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
 
-            <div class="collapse navbar-collapse" id="menu">
-                <ul class="nav-links navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#habilidades">Habilidades</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-                    <li class="nav-item"><a class="nav-link" href="about.html">Sobre Mí</a></li>
-                </ul>
-            </div>
+      <div class="collapse navbar-collapse" id="menu">
+        <ul class="nav-links navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#habilidades">Habilidades</a></li>
+          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
+          <li class="nav-item"><a class="nav-link" href="about.html">Sobre Mí</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header id="inicio" class="hero">
+    <div class="hero-content">
+      <span class="badge">Disponible para nuevos proyectos</span>
+      <h1>Creando soluciones con <span>propósito</span> y detalle.</h1>
+      <p>Desarrolladora de Software enfocada en soluciones digitales y diseño impecable.</p>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" onclick="location.href='#proyectos'">Explorar Proyectos</button>
+        <button class="btn btn-outline-light" onclick="location.href='#contacto'">Hablemos</button>
+      </div>
+    </div>
+  </header>
+
+  <section id="proyectos" class="section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2>Proyectos <span>Seleccionados</span></h2>
+      </div>
+      <div class="row g-4" id="project-grid">
+        <p class="text-center">Cargando proyectos...</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="habilidades" class="section">
+    <div class="container">
+      <div class="section-header text-center mb-5">
+        <h2>Habilidades <span>Técnicas</span></h2>
+      </div>
+
+      <div class="skills-wrapper">
+        <aside class="skills-nav mb-4">
+          <button class="skill-tab active" data-category="Lenguajes">Lenguajes</button>
+          <button class="skill-tab" data-category="Bases de Datos">Bases de Datos</button>
+          <button class="skill-tab" data-category="Herramientas">Herramientas</button>
+          <button class="skill-tab" data-category="Metodologías">Metodologías</button>
+        </aside>
+
+        <div class="skills-grid" id="habilidades-container">
+          <p class="text-center">Cargando habilidades...</p>
         </div>
-    </nav>
+      </div>
+    </div>
+  </section>
 
-    <header id="inicio" class="hero">
-        <div class="hero-content container text-center">
-            <span class="badge">Disponible para nuevos proyectos</span>
-            <h1>Creando soluciones con <span>propósito</span> y detalle.</h1>
-            <p>Desarrolladora de Software enfocada en soluciones digitales y diseño impecable.</p>
-            <div class="hero-buttons">
-                <button class="btn btn-primary" onclick="location.href='#proyectos'">Explorar Proyectos</button>
-                <button class="btn btn-outline-light" onclick="location.href='#contacto'">Hablemos</button>
-            </div>
-        </div>
-    </header>
+  <section id="testimonios" class="section">
+    <div class="container">
+      <div class="section-header text-center">
+        <h2>Lo que <span>dicen</span></h2>
+      </div>
+      <div class="row g-4" id="testimonios-grid">
+        <p class="text-center">Cargando testimonios...</p>
+      </div>
+    </div>
+  </section>
 
-    <section id="proyectos" class="section">
-        <div class="container">
-            <div class="section-header text-center">
-                <h2>Proyectos <span>Seleccionados</span></h2>
-            </div>
-            
-            <div class="row g-4" id="project-grid">
-                <p class="text-center">Cargando proyectos...</p>
-            </div>
-        </div>
-    </section>
+  <footer id="contacto">
+    <div class="container text-center">
+      <h2>¿Tienes una idea en mente?</h2>
+      <div class="social-links">
+        <a href="#" id="link-linkedin" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+        <a href="#" id="link-github" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+        <a href="#" id="link-gmail" aria-label="Email"><i class="fas fa-envelope"></i></a>
+      </div>
+      <p class="copyright">&copy; 2026 Yohana Franceschi &mdash; Chiriqu&iacute;, Panam&aacute;</p>
+    </div>
+  </footer>
 
-    <section id="habilidades" class="section">
-        <div class="container">
-            <div class="section-header text-center mb-5">
-                <h2>Habilidades <span>Técnicas</span></h2>
-            </div>
-
-            <div class="skills-wrapper">
-                <aside class="skills-nav mb-4">
-                    <button class="skill-tab active" data-category="Lenguajes">Lenguajes</button>
-                    <button class="skill-tab" data-category="Bases de Datos">Bases de Datos</button>
-                    <button class="skill-tab" data-category="Herramientas">Herramientas</button>
-                    <button class="skill-tab" data-category="Metodologías">Metodologías</button>
-                </aside>
-
-                <div class="skills-grid" id="habilidades-container">
-                    <p class="text-center">Cargando habilidades...</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <footer id="contacto">
-        <div class="footer-content container text-center">
-            <h2>¿Tienes una idea en mente?</h2>
-            <div class="social-links">
-                <a href="#" id="link-linkedin" target="_blank"><i class="fab fa-linkedin-in"></i></a>
-                <a href="#" id="link-github" target="_blank"><i class="fab fa-github"></i></a>
-                <a href="#" id="link-gmail"><i class="fas fa-envelope"></i></a>
-            </div>
-            <p class="copyright">© 2026 Yohana Franceschi - Chiriquí, Panamá</p>
-        </div>
-    </footer>
-
-    <!-- Bootstrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-
-    
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-    
-    <script src="js/config.js"></script>
-
-    <!-- TUS SCRIPTS -->
-    <script src="js/main.js"></script>
-    <script src="js/script.js"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/config.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
