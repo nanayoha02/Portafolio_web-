@@ -42,6 +42,9 @@
             <button onclick="showTab('tab-testimonios', event)" class="tab-btn">
                 <i class="fas fa-star"></i> Testimonios
             </button>
+            <button onclick="showTab('tab-certificaciones', event)" class="tab-btn">
+                <i class="fas fa-certificate"></i> Certificaciones
+            </button>
             <button onclick="showTab('tab-sobre', event)" class="tab-btn">
                 <i class="fas fa-user-circle"></i> Sobre Mí
             </button>
@@ -191,8 +194,39 @@
             </div>
         </section>
 
+        <section id="tab-certificaciones" class="tab-content">
+            <div class="admin-grid">
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-plus-circle"></i> Nueva Certificaci&oacute;n</h3>
+                    </div>
+                    <form id="form-certificacion">
+                        <div class="input-group">
+                            <input type="text" id="c-nombre" placeholder="Nombre (Ej: AWS Cloud Practitioner)" required>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="c-emisor" placeholder="Emisor (Ej: Amazon Web Services)">
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="c-anio" placeholder="A&ntilde;o (Ej: 2025)">
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="c-icono" placeholder="Icono (Ej: fab fa-aws)">
+                        </div>
+                        <button type="submit" class="btn-primary w-100">A&ntilde;adir Certificaci&oacute;n</button>
+                    </form>
+                </div>
+                <div class="admin-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-list"></i> Certificaciones</h3>
+                    </div>
+                    <div id="lista-certificaciones" class="admin-list-container"></div>
+                </div>
+            </div>
+        </section>
+
         <section id="tab-sobre" class="tab-content">
-      <div class="admin-card max-w-800">
+            <div class="admin-card max-w-800">
         <div class="card-header">
           <h3><i class="fas fa-id-card"></i> Editar Perfil</h3>
         </div>

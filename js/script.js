@@ -10,27 +10,21 @@
 
   window.addEventListener('scroll', () => {
     const navbar = document.querySelector('.navbar');
-    if (navbar) {
-      navbar.classList.toggle('scrolled', window.scrollY > 50);
-    }
+    if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 50);
   });
 
   async function cargarRedesSociales() {
     try {
       const { data, error } = await sb.from('perfil').select('*').eq('id', 1).single();
       if (error || !data) return;
-
-      const setAttr = (id, attr, val) => {
+      const ids = ['link-gmail', 'link-linkedin', 'link-github'];
+      const attrs = ['href', 'href', 'href'];
+      const vals = [`mailto:${data.email}`, data.linkedin, data.github];
+      ids.forEach((id, i) => {
         const el = document.getElementById(id);
-        if (el) el.setAttribute(attr, val);
-      };
-
-      setAttr('link-gmail', 'href', `mailto:${data.email}`);
-      setAttr('link-linkedin', 'href', data.linkedin);
-      setAttr('link-github', 'href', data.github);
-    } catch (err) {
-      console.log("Perfil no disponible");
-    }
+        if (el) el.setAttribute(attrs[i], vals[i] || '#');
+      });
+    } catch (err) { console.log("Perfil no disponible"); }
   }
 
   async function mostrarProyectos() {
@@ -46,51 +40,44 @@
       if (error) throw error;
 
       if (!proyectos || proyectos.length === 0) {
-        contenedor.innerHTML = '<p class="text-center">Sin proyectos a&uacute;n.</p>';
+        contenedor.innerHTML = '<div class="span-4 text-center" style="padding:20px;color:var(--text-muted);font-size:0.9rem">Sin proyectos a&uacute;n.</div>';
         return;
       }
 
-      contenedor.innerHTML = proyectos.map(p => {
+      if (document.getElementById('stat-proyectos')) {
+        document.getElementById('stat-proyectos').textContent = proyectos.length;
+      }
+
+      contenedor.innerHTML = proyectos.slice(0, 4).map((p, i) => {
         const progreso = Number(p.progreso) || 0;
         let etapa = "En Desarrollo";
         if (progreso >= 100) etapa = "Finalizado";
         else if (progreso >= 60) etapa = "Beta";
 
-        const imgUrl = p.imagen_url || 'https://via.placeholder.com/600x400';
+        const imgUrl = p.imagen_url || '';
+        const span = i === 0 ? 'span-2' : 'span-1';
 
         return `
-          <div class="col-md-4">
-            <div class="card h-100">
-              <img src="${imgUrl}" class="card-img-top" alt="${p.titulo || ''}"
-                loading="lazy"
-                onerror="this.src='https://via.placeholder.com/600x400'">
-              <div class="card-body d-flex flex-column">
-                <h5>${p.titulo || ''}</h5>
-                <p class="card-text">${p.descripcion || ''}</p>
-                <small class="text-muted mb-2">${etapa} &mdash; ${progreso}%</small>
-                <div class="progress mb-2">
-                  <div class="progress-bar" style="width:${progreso}%"></div>
-                </div>
-                <div class="mb-2">
-                  ${p.tecnologias
-                    ? p.tecnologias.split(',').map(t => `<span class="badge bg-secondary me-1">${t.trim()}</span>`).join('')
-                    : ''}
-                </div>
-                <div class="mt-auto d-flex gap-2">
-                  ${p.github_url
-                    ? `<a href="${p.github_url}" target="_blank" class="btn btn-dark btn-sm" aria-label="GitHub"><i class="fab fa-github"></i></a>`
-                    : ''}
-                  ${p.web_url
-                    ? `<a href="${p.web_url}" target="_blank" class="btn btn-primary btn-sm">Ver</a>`
-                    : ''}
-                </div>
+          <div class="bento-card project-card ${span}">
+            ${imgUrl ? `<img src="${imgUrl}" class="project-img" alt="${p.titulo || ''}" loading="lazy" onerror="this.style.display='none'">` : ''}
+            <div class="project-body">
+              <h3>${p.titulo || ''}</h3>
+              <p>${p.descripcion || ''}</p>
+              ${p.tecnologias ? `<div class="project-tags">${p.tecnologias.split(',').map(t => `<span>${t.trim()}</span>`).join('')}</div>` : ''}
+              <div class="project-progress">
+                <div class="progress-bar-track"><div class="progress-bar-fill" style="width:${progreso}%"></div></div>
+                <small>${etapa} &mdash; ${progreso}%</small>
+              </div>
+              <div class="project-links">
+                ${p.github_url ? `<a href="${p.github_url}" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>` : ''}
+                ${p.web_url ? `<a href="${p.web_url}" target="_blank" class="btn-view"><i class="fas fa-external-link-alt"></i> Ver</a>` : ''}
               </div>
             </div>
           </div>`;
       }).join('');
     } catch (err) {
       console.error(err);
-      contenedor.innerHTML = '<p class="text-center">Error al cargar proyectos.</p>';
+      contenedor.innerHTML = '<div class="span-4 text-center" style="padding:20px;color:var(--text-muted)">Error al cargar proyectos.</div>';
     }
   }
 
@@ -98,27 +85,30 @@
     const contenedor = document.getElementById('habilidades-container');
     if (!contenedor) return;
 
-    contenedor.innerHTML = '<p class="text-center">Cargando...</p>';
+    contenedor.innerHTML = '<p style="font-size:0.8rem;color:var(--text-muted);grid-column:1/-1">Cargando...</p>';
 
     try {
       const { data, error } = await sb.from('habilidades').select('*').eq('categoria', categoria);
       if (error) throw error;
 
+      if (document.getElementById('stat-habilidades')) {
+        const { data: all } = await sb.from('habilidades').select('*');
+        document.getElementById('stat-habilidades').textContent = all ? all.length : 0;
+      }
+
       if (!data || data.length === 0) {
-        contenedor.innerHTML = '<p class="text-center">Sin habilidades a&uacute;n.</p>';
+        contenedor.innerHTML = '<p style="font-size:0.8rem;color:var(--text-muted);grid-column:1/-1">Sin habilidades</p>';
         return;
       }
 
-      contenedor.innerHTML = data.map((h, i) => `
-        <div class="skill-card" style="animation-delay:${i * 0.1}s">
+      contenedor.innerHTML = data.map(h => `
+        <div class="skill-item">
           <i class="${h.icono || 'fas fa-code'}"></i>
-          <h4>${h.nombre}</h4>
-          <p class="skill-level">${h.nivel || ''}</p>
+          <span>${h.nombre}</span>
         </div>
       `).join('');
     } catch (err) {
       console.error(err);
-      contenedor.innerHTML = '<p class="text-center">Error al cargar habilidades.</p>';
     }
   }
 
@@ -127,29 +117,15 @@
       const { data, error } = await sb.from('sobre_mi').select('*').eq('id', 1).single();
       if (error || !data) return;
 
-      const setText = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.innerText = val || '';
-      };
-
-      setText('about-titulo', data.titulo);
-      setText('about-desc1', data.descripcion_1 || data.descripcion1);
-      setText('about-desc2', data.descripcion_2 || data.descripcion2);
-
-      const img = document.getElementById('about-img');
-      if (img) img.src = data.imagen || data.imagen_url || 'img/yoha_photo.png';
-
-      const lista = document.getElementById('about-lista');
-      if (lista && data.lista) {
-        lista.innerHTML = data.lista.split(',').map(i => `<li>${i.trim()}</li>`).join('');
-      }
-    } catch (err) {
-      console.log("Error cargando Sobre M&iacute;");
-    }
+      const d1 = document.getElementById('about-desc1');
+      const d2 = document.getElementById('about-desc2');
+      if (d1) d1.innerText = data.descripcion_1 || data.descripcion1 || d1.innerText;
+      if (d2) d2.innerText = data.descripcion_2 || data.descripcion2 || d2.innerText;
+    } catch (err) { console.log("Error cargando Sobre M&iacute;"); }
   }
 
   async function mostrarTestimonios() {
-    const contenedor = document.getElementById('testimonios-grid');
+    const contenedor = document.getElementById('testimonios-container');
     if (!contenedor) return;
 
     try {
@@ -157,28 +133,48 @@
       if (error) throw error;
 
       if (!data || data.length === 0) {
-        contenedor.innerHTML = '';
+        contenedor.innerHTML = '<p style="font-size:0.85rem;color:var(--text-muted)">A&uacute;n no hay testimonios.</p>';
         return;
       }
 
-      contenedor.innerHTML = data.map(t => `
-        <div class="col-md-6 col-lg-4">
-          <div class="testimonial-card h-100">
-            <p class="testimonial-text">${t.texto || ''}</p>
-            <div class="testimonial-author">
-              <img src="${t.avatar_url || 'https://via.placeholder.com/44'}" alt="${t.nombre || ''}"
-                class="testimonial-avatar"
-                onerror="this.src='https://via.placeholder.com/44'">
-              <div>
-                <div class="testimonial-name">${t.nombre || ''}</div>
-                <div class="testimonial-role">${t.rol || ''}</div>
-              </div>
-            </div>
+      const t = data[0];
+      contenedor.innerHTML = `
+        <p class="testimonial-text">${t.texto || ''}</p>
+        <div class="testimonial-author">
+          <img src="${t.avatar_url || 'https://via.placeholder.com/40'}" alt="${t.nombre || ''}" class="testimonial-avatar" onerror="this.src='https://via.placeholder.com/40'">
+          <div>
+            <div class="testimonial-name">${t.nombre || ''}</div>
+            <div class="testimonial-role">${t.rol || ''}</div>
+          </div>
+        </div>`;
+    } catch (err) { console.error(err); }
+  }
+
+  async function mostrarCertificaciones() {
+    const contenedor = document.getElementById('cert-grid');
+    if (!contenedor) return;
+
+    try {
+      const { data, error } = await sb.from('certificaciones').select('*').order('created_at', { ascending: false });
+      if (error) throw error;
+
+      if (!data || data.length === 0) {
+        contenedor.innerHTML = '<p style="font-size:0.8rem;color:var(--text-muted);grid-column:1/-1">Sin certificaciones a&uacute;n.</p>';
+        return;
+      }
+
+      contenedor.innerHTML = data.map(c => `
+        <div class="cert-item">
+          <div class="cert-icon"><i class="${c.icono || 'fas fa-certificate'}"></i></div>
+          <div class="cert-info">
+            <h4>${c.nombre || ''}</h4>
+            <span>${c.emisor || ''}${c.anio ? ` &middot; ${c.anio}` : ''}</span>
           </div>
         </div>
       `).join('');
     } catch (err) {
       console.error(err);
+      contenedor.innerHTML = '';
     }
   }
 
@@ -186,12 +182,13 @@
     mostrarProyectos();
     mostrarHabilidades('Lenguajes');
     mostrarTestimonios();
+    mostrarCertificaciones();
     cargarRedesSociales();
     cargarSobreMi();
 
-    document.querySelectorAll('.skill-tab').forEach(btn => {
+    document.querySelectorAll('.skill-tab-bento').forEach(btn => {
       btn.addEventListener('click', () => {
-        document.querySelectorAll('.skill-tab').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.skill-tab-bento').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         mostrarHabilidades(btn.dataset.category);
       });

@@ -30,9 +30,31 @@ async function cargarDatosAdmin() {
     cargarProyectosAdmin(),
     cargarHabilidadesAdmin(),
     cargarTestimoniosAdmin(),
+    cargarCertificacionesAdmin(),
     cargarContactoAdmin(),
     cargarSobreMiAdmin()
   ]);
+}
+
+async function cargarCertificacionesAdmin() {
+  const listaC = document.getElementById('lista-certificaciones');
+  if (!listaC) return;
+
+  const { data } = await supabaseClient.from('certificaciones').select('*').order('created_at', { ascending: false });
+  listaC.innerHTML = data && data.length
+    ? data.map(c => `
+      <div class="admin-item" data-id="${c.id}">
+        <div class="admin-item-info">
+          <strong>${c.nombre || 'Sin nombre'}</strong>
+          <span class="admin-item-progress">${c.emisor || ''}${c.anio ? ` &middot; ${c.anio}` : ''}</span>
+        </div>
+        <div class="admin-item-actions">
+          <button class="btn-delete" onclick="eliminar('certificaciones', '${c.id}')" title="Eliminar">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>`).join('')
+    : '<p class="text-muted">No hay certificaciones.</p>';
 }
 
 async function cargarTestimoniosAdmin() {
@@ -269,6 +291,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
         await supabaseClient.from('testimonios').insert([payload]);
         alert('Testimonio añadido');
+        e.target.reset();
+        cargarDatosAdmin();
+      } catch (err) { alert(err.message); }
+      btn.disabled = false;
+    });
+
+    document.getElementById('form-certificacion')?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+
+      try {
+        const payload = {
+          nombre: document.getElementById('c-nombre').value,
+          emisor: document.getElementById('c-emisor').value,
+          anio: document.getElementById('c-anio').value,
+          icono: document.getElementById('c-icono').value || 'fas fa-certificate'
+        };
+
+        await supabaseClient.from('certificaciones').insert([payload]);
+        alert('Certificaci&oacute;n a&ntilde;adida');
         e.target.reset();
         cargarDatosAdmin();
       } catch (err) { alert(err.message); }

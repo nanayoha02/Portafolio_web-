@@ -3,115 +3,134 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Portafolio de Yohana Franceschi - Desarrolladora de Software enfocada en soluciones digitales y diseño impecable.">
-  <meta name="keywords" content="Yohana Franceschi, desarrolladora, software, portafolio, Chiriquí, Panamá">
+  <meta name="description" content="Yohana Franceschi &mdash; Desarrolladora de Software. Portafolio profesional con proyectos, tecnolog&iacute;as y experiencia.">
+  <meta name="keywords" content="Yohana Franceschi, desarrolladora, software, portafolio, Chiriqu&iacute;, Panam&aacute;">
   <meta name="author" content="Yohana Franceschi">
   <meta property="og:title" content="Yohana Franceschi | Portafolio">
-  <meta property="og:description" content="Desarrolladora de Software enfocada en soluciones digitales y diseño impecable.">
-  <meta property="og:type" content="website">
-  <meta name="theme-color" content="#1a1a2e">
+  <meta property="og:description" content="Desarrolladora de Software enfocada en soluciones digitales y dise&ntilde;o impecable.">
+  <meta name="theme-color" content="#C5B49E">
   <title>Yohana Franceschi | Portafolio</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="icon" href="img/favicon.png" type="image/png">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
-
 <body>
 
-  <nav class="navbar navbar-expand-lg fixed-top">
+  <nav class="navbar" id="navbar">
     <div class="container">
-      <a href="index.html" class="logo navbar-brand">
-        YOHANA FRANCESCHI<span>.</span>
-      </a>
-
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-
+      <a href="index.html" class="logo">Yohana Franceschi<span>.</span></a>
       <div class="collapse navbar-collapse" id="menu">
         <ul class="nav-links navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="#inicio">Inicio</a></li>
-          <li class="nav-item"><a class="nav-link" href="#proyectos">Proyectos</a></li>
-          <li class="nav-item"><a class="nav-link" href="#habilidades">Habilidades</a></li>
-          <li class="nav-item"><a class="nav-link" href="#contacto">Contacto</a></li>
-          <li class="nav-item"><a class="nav-link" href="about.html">Sobre Mí</a></li>
+          <li><a href="#inicio">Inicio</a></li>
+          <li><a href="#trabajo">Trabajo</a></li>
+          <li><a href="#about">Sobre m&iacute;</a></li>
+          <li><a href="about.html">M&aacute;s</a></li>
         </ul>
       </div>
+      <button class="navbar-toggler d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+        <span class="navbar-toggler-icon"></span>
+      </button>
     </div>
   </nav>
 
-  <header id="inicio" class="hero">
-    <div class="hero-content">
-      <span class="badge">Disponible para nuevos proyectos</span>
-      <h1>Creando soluciones con <span>propósito</span> y detalle.</h1>
-      <p>Desarrolladora de Software enfocada en soluciones digitales y diseño impecable.</p>
+  <main class="container bento-grid" id="inicio">
+
+    <!-- HERO -->
+    <div class="bento-card span-2 span-row-2 hero-card">
+      <span class="hero-badge"><i class="fas fa-circle" style="font-size:0.4rem"></i> Disponible para proyectos</span>
+      <h1>Creando soluciones con <span>prop&oacute;sito</span> y detalle.</h1>
+      <p>Desarrolladora de Software enfocada en soluciones digitales y dise&ntilde;o impecable. Con base en Chiriqu&iacute;, Panam&aacute;.</p>
       <div class="hero-buttons">
-        <button class="btn btn-primary" onclick="location.href='#proyectos'">Explorar Proyectos</button>
-        <button class="btn btn-outline-light" onclick="location.href='#contacto'">Hablemos</button>
+        <a href="#trabajo" class="btn btn-primary">Ver proyectos <i class="fas fa-arrow-right" style="font-size:0.75rem"></i></a>
+        <a href="#contacto" class="btn btn-outline">Hablemos</a>
       </div>
     </div>
-  </header>
 
-  <section id="proyectos" class="section">
-    <div class="container">
-      <div class="section-header text-center">
-        <h2>Proyectos <span>Seleccionados</span></h2>
-      </div>
-      <div class="row g-4" id="project-grid">
-        <p class="text-center">Cargando proyectos...</p>
-      </div>
-    </div>
-  </section>
-
-  <section id="habilidades" class="section">
-    <div class="container">
-      <div class="section-header text-center mb-5">
-        <h2>Habilidades <span>Técnicas</span></h2>
-      </div>
-
-      <div class="skills-wrapper">
-        <aside class="skills-nav mb-4">
-          <button class="skill-tab active" data-category="Lenguajes">Lenguajes</button>
-          <button class="skill-tab" data-category="Bases de Datos">Bases de Datos</button>
-          <button class="skill-tab" data-category="Herramientas">Herramientas</button>
-          <button class="skill-tab" data-category="Metodologías">Metodologías</button>
-        </aside>
-
-        <div class="skills-grid" id="habilidades-container">
-          <p class="text-center">Cargando habilidades...</p>
+    <!-- PROFILE -->
+    <div class="bento-card profile-card">
+      <img src="img/yoha_photo.png" alt="Yohana Franceschi" class="profile-image" onerror="this.src='https://via.placeholder.com/120'">
+      <h3>Yohana Franceschi</h3>
+      <p class="role">Desarrolladora de Software</p>
+      <div class="profile-stats">
+        <div class="stat-item">
+          <span class="stat-number" id="stat-proyectos">0</span>
+          <span class="stat-label">Proyectos</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number" id="stat-habilidades">0</span>
+          <span class="stat-label">Skills</span>
         </div>
       </div>
     </div>
-  </section>
 
-  <section id="testimonios" class="section">
-    <div class="container">
-      <div class="section-header text-center">
-        <h2>Lo que <span>dicen</span></h2>
+    <!-- SKILLS PREVIEW -->
+    <div class="bento-card skills-bento">
+      <h4 style="font-family:var(--font-serif);font-weight:700;font-size:1rem;margin-bottom:12px;color:var(--text-primary)">Stack</h4>
+      <div class="skill-nav-bento">
+        <button class="skill-tab-bento active" data-category="Lenguajes">Lenguajes</button>
+        <button class="skill-tab-bento" data-category="Herramientas">Tools</button>
       </div>
-      <div class="row g-4" id="testimonios-grid">
-        <p class="text-center">Cargando testimonios...</p>
+      <div class="skills-grid-bento" id="habilidades-container">
+        <p style="font-size:0.8rem;color:var(--text-muted);grid-column:1/-1">Cargando...</p>
       </div>
     </div>
-  </section>
 
-  <footer id="contacto">
-    <div class="container text-center">
-      <h2>¿Tienes una idea en mente?</h2>
-      <div class="social-links">
+    <!-- SECTION: PROJECTS -->
+    <div class="span-4" style="padding:20px 0 0" id="trabajo">
+      <h2 class="section-heading">Trabajo <span>seleccionado</span></h2>
+    </div>
+
+    <!-- PROJECTS DYNAMIC -->
+    <div id="project-grid" style="display:contents">
+      <div class="span-4 text-center" style="padding:40px;color:var(--text-muted);font-size:0.9rem">Cargando proyectos...</div>
+    </div>
+
+    <!-- CERTIFICACIONES -->
+    <div class="bento-card span-2">
+      <h3 style="font-family:var(--font-serif);font-weight:700;font-size:1.1rem;margin-bottom:16px">Certificaciones</h3>
+      <div id="cert-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px">
+        <p style="font-size:0.8rem;color:var(--text-muted);grid-column:1/-1">Cargando...</p>
+      </div>
+    </div>
+
+    <!-- BIO -->
+    <div class="bento-card span-2 bio-card" id="about">
+      <h3>Sobre m&iacute;</h3>
+      <p id="about-desc1">Soy desarrolladora de software apasionada por crear experiencias digitales elegantes, modernas y con prop&oacute;sito.</p>
+      <p id="about-desc2" style="margin-top:8px">Me especializo en convertir ideas en soluciones funcionales, con atenci&oacute;n al detalle y compromiso con la calidad.</p>
+      <div class="bio-tags">
+        <span>Panam&aacute;</span>
+        <span>Full-Stack</span>
+        <span>UI/UX</span>
+      </div>
+      <a href="about.html" class="btn btn-ghost" style="margin-top:12px;padding-left:0">Conoce m&aacute;s <i class="fas fa-arrow-right" style="font-size:0.7rem;margin-left:6px"></i></a>
+    </div>
+
+    <!-- TESTIMONIAL -->
+    <div class="bento-card testimonial-bento" id="testimonial-card">
+      <div id="testimonios-container">
+        <p style="font-size:0.85rem;color:var(--text-muted)">Cargando...</p>
+      </div>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="bento-card primary social-bento" id="contacto">
+      <h3>Colaboremos</h3>
+      <p>Disponible para nuevos proyectos</p>
+      <div class="social-links-bento">
         <a href="#" id="link-linkedin" target="_blank" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
         <a href="#" id="link-github" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
         <a href="#" id="link-gmail" aria-label="Email"><i class="fas fa-envelope"></i></a>
       </div>
-      <p class="copyright">&copy; 2026 Yohana Franceschi &mdash; Chiriqu&iacute;, Panam&aacute;</p>
     </div>
-  </footer>
+
+  </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
