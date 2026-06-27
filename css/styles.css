@@ -747,6 +747,66 @@ a { color: inherit; text-decoration: none; }
   transform: translateY(0);
 }
 
+/* --- CAT MASCOT --- */
+.cat-mascot {
+  position: absolute;
+  bottom: 24px;
+  right: 28px;
+  width: 68px;
+  height: 68px;
+  color: var(--primary);
+  opacity: 0.15;
+  animation: catFloat 4s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.cat-mascot:hover {
+  opacity: 0.4;
+}
+
+@keyframes catFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+.hero-card { position: relative; }
+
+.cat-head, .cat-body, .cat-tail, .cat-ear-l, .cat-ear-r, .cat-paw-l, .cat-paw-r {
+  transition: all 0.3s ease;
+}
+
+.cat-mascot:hover .cat-eye-l,
+.cat-mascot:hover .cat-eye-r {
+  d: path("M53 44Q55.5 46 58 44");
+}
+
+/* Tiny cat in footer */
+.cat-mini {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  color: var(--primary);
+  opacity: 0.4;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+
+/* Cat on hover elements */
+.cat-peek {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  color: var(--primary);
+  opacity: 0.6;
+  vertical-align: middle;
+  transition: all 0.3s ease;
+}
+
+.cat-peek:hover {
+  opacity: 1;
+  transform: scale(1.2) rotate(-5deg);
+}
+
 /* --- CERTIFICATIONS --- */
 .cert-item {
   display: flex;
