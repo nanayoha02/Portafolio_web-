@@ -32,8 +32,22 @@ async function cargarDatosAdmin() {
     cargarTestimoniosAdmin(),
     cargarCertificacionesAdmin(),
     cargarContactoAdmin(),
-    cargarSobreMiAdmin()
+    cargarSobreMiAdmin(),
+    cargarCurriculumAdmin()
   ]);
+}
+
+async function cargarCurriculumAdmin() {
+  const link = document.getElementById('cv-link');
+  if (!link) return;
+
+  const { data } = await supabaseClient.from('perfil').select('cv_url').eq('id', 1).single();
+  if (data && data.cv_url) {
+    link.href = data.cv_url;
+    link.style.display = 'inline-flex';
+  } else {
+    link.style.display = 'none';
+  }
 }
 
 async function cargarCertificacionesAdmin() {
@@ -363,8 +377,41 @@ document.addEventListener('DOMContentLoaded', () => {
       btn.disabled = false;
     });
 
-    document.getElementById('form-sobre')?.addEventListener('submit', async (e) => {
+    document.getElementById('form-cv')?.addEventListener('submit', async (e) => {
       e.preventDefault();
+      const btn = e.target.querySelector('button');
+      btn.disabled = true;
+
+      try {
+        const file = document.getElementById('cv-file')?.files[0];
+        if (!file) {
+          alert('Selecciona un archivo PDF');
+          btn.disabled = false;
+          return;
+        }
+
+        const name = `cv_yohana_${Date.now()}.pdf`;
+        const { error: upErr } = await supabaseClient.storage
+          .from('proyectos-imagenes')
+          .upload(name, file, { contentType: 'application/pdf', upsert: true });
+        if (upErr) throw upErr;
+
+        const { data: urlData } = supabaseClient.storage.from('proyectos-imagenes').getPublicUrl(name);
+
+        const { error } = await supabaseClient.from('perfil').update({ cv_url: urlData.publicUrl }).eq('id', 1);
+        if (error) {
+          alert('La tabla "perfil" no tiene la columna cv_url. Ejecuta en el SQL Editor de Supabase:\n\nALTER TABLE perfil ADD COLUMN IF NOT EXISTS cv_url text;');
+        } else {
+          alert('Curriculum subido correctamente');
+          cargarCurriculumAdmin();
+        }
+
+        e.target.reset();
+      } catch (err) { alert(err.message); }
+      btn.disabled = false;
+    });
+
+    document.getElementById('form-sobre')?.addEventListener('submit', async (e) => {      e.preventDefault();
       const btn = e.target.querySelector('button');
       btn.disabled = true;
 

@@ -446,6 +446,26 @@ textarea { resize: vertical; min-height: 70px; }
 
 .text-muted { color: var(--text-muted) !important; }
 
+.cv-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+  color: var(--success);
+  padding: 8px 16px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+.cv-link:hover {
+  background: rgba(34, 197, 94, 0.2);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
 .max-w-600 { max-width: 600px; margin: 0 auto; }
 .max-w-800 { max-width: 800px; margin: 0 auto; }
 

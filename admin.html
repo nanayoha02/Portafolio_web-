@@ -48,6 +48,9 @@
             <button onclick="showTab('tab-sobre', event)" class="tab-btn">
                 <i class="fas fa-user-circle"></i> Sobre Mí
             </button>
+            <button onclick="showTab('tab-curriculum', event)" class="tab-btn">
+                <i class="fas fa-file-arrow-down"></i> Curriculum
+            </button>
     </nav>
 
     <section id="tab-proyectos" class="tab-content active">
@@ -252,6 +255,27 @@
             <input type="text" id="about-lista-input">
           </div>
           <button type="submit" class="btn-primary">Guardar Perfil</button>
+        </form>
+      </div>
+    </section>
+
+    <section id="tab-curriculum" class="tab-content">
+      <div class="admin-card max-w-600">
+        <div class="card-header">
+          <h3><i class="fas fa-file-arrow-down"></i> Curriculum Vitae</h3>
+        </div>
+        <form id="form-cv">
+          <div class="input-group">
+            <label>Archivo PDF del Curriculum</label>
+            <input type="file" id="cv-file" accept="application/pdf,.pdf" class="file-input" required>
+            <small>Sube tu CV en PDF. El bot&oacute;n "Descargar CV" del sitio lo usar&aacute; autom&aacute;ticamente.</small>
+          </div>
+          <div class="input-group">
+            <a id="cv-link" href="#" target="_blank" rel="noopener" class="cv-link" style="display:none;">
+              <i class="fas fa-external-link-alt"></i> Ver PDF actual
+            </a>
+          </div>
+          <button type="submit" class="btn-primary">Subir Curriculum</button>
         </form>
       </div>
     </section>

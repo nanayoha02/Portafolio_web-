@@ -208,4 +208,22 @@
       window.open('login.html', '_blank');
     }
   });
+
+  /* --------------------------------------------------------
+     9. DESCARGAR CV: usa el PDF subido desde el panel admin
+  -------------------------------------------------------- */
+  const cvBtn = document.getElementById('btn-cv');
+  if (cvBtn && window._supabase) {
+    window._supabase
+      .from('perfil')
+      .select('cv_url')
+      .eq('id', 1)
+      .single()
+      .then(({ data }) => {
+        if (data && data.cv_url) {
+          cvBtn.href = data.cv_url;
+        }
+      })
+      .catch(() => {});
+  }
 })();
