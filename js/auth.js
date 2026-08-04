@@ -1,4 +1,4 @@
-let supabaseClient;
+﻿let supabaseClient;
 
 function initSupabase() {
   supabaseClient = window._supabase;

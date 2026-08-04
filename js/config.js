@@ -1,4 +1,4 @@
-if (!window._supabase) {
+﻿if (!window._supabase) {
     const SUPABASE_URL = "https://hydpocjkzsrsfbwgdodi.supabase.co";
     const SUPABASE_KEY = "sb_publishable_HnGLMO92-LnYnnPhFIYkEQ__NGTp_SJ";
 

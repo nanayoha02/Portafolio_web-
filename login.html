@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -7,20 +7,21 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
     :root {
-      --bg: #C5B49E;
-      --bg-card: #F4EFEA;
-      --primary: #580C14;
-      --primary-light: #7A1E2A;
-      --text-primary: #2C1810;
-      --text-secondary: #6B5B4E;
-      --text-muted: #9B8B7A;
-      --font-serif: 'Playfair Display', Georgia, serif;
+      --bg: #0f172a;
+      --bg-card: #1e293b;
+      --bg-input: #0f172a;
+      --primary: #6366f1;
+      --primary-light: #3b82f6;
+      --text-primary: #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --border-color: #334155;
       --font-sans: 'Inter', -apple-system, sans-serif;
     }
 
@@ -34,28 +35,38 @@
       background: var(--bg);
       font-family: var(--font-sans);
       -webkit-font-smoothing: antialiased;
+      background-image:
+        radial-gradient(600px at 10% 10%, rgba(99, 102, 241, 0.15), transparent 60%),
+        radial-gradient(600px at 90% 90%, rgba(34, 197, 94, 0.08), transparent 60%);
     }
 
     .login-container {
       background: var(--bg-card);
       padding: 48px 40px;
-      border-radius: 32px;
+      border-radius: 24px;
       width: 100%;
       max-width: 400px;
       text-align: center;
-      box-shadow: 0 20px 60px rgba(44, 24, 16, 0.12);
+      border: 1px solid var(--border-color);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
       animation: fadeUp 0.6s ease;
     }
 
     .login-container h2 {
-      font-family: var(--font-serif);
+      font-family: var(--font-sans);
       color: var(--text-primary);
-      font-weight: 700;
+      font-weight: 800;
       font-size: 2rem;
       margin-bottom: 4px;
+      letter-spacing: -0.02em;
     }
 
-    .login-container h2 span { color: var(--primary); }
+    .login-container h2 span {
+      background: linear-gradient(90deg, #6366f1, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
 
     .login-container p {
       color: var(--text-secondary);
@@ -67,8 +78,8 @@
       width: 100%;
       padding: 14px 18px;
       margin: 8px 0;
-      background: rgba(88, 12, 20, 0.04);
-      border: 1px solid rgba(88, 12, 20, 0.1);
+      background: var(--bg-input);
+      border: 1px solid var(--border-color);
       border-radius: 14px;
       color: var(--text-primary);
       font-family: var(--font-sans);
@@ -79,7 +90,7 @@
     .login-container input:focus {
       border-color: var(--primary);
       outline: none;
-      box-shadow: 0 0 0 3px rgba(88, 12, 20, 0.08);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
     }
 
     .login-container input::placeholder { color: var(--text-muted); }
@@ -87,7 +98,7 @@
     .btn-login {
       width: 100%;
       padding: 14px;
-      background: var(--primary);
+      background: linear-gradient(90deg, #6366f1, #3b82f6);
       color: #fff;
       border: none;
       border-radius: 14px;
@@ -97,12 +108,12 @@
       cursor: pointer;
       margin-top: 16px;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 18px rgba(99, 102, 241, 0.35);
     }
 
     .btn-login:hover {
-      background: var(--primary-light);
       transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(88, 12, 20, 0.2);
+      box-shadow: 0 8px 26px rgba(99, 102, 241, 0.5);
     }
 
     .back-link {
