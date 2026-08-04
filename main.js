@@ -198,4 +198,14 @@
   -------------------------------------------------------- */
   const yearEl = document.getElementById('year');
   if (yearEl) yearEl.textContent = new Date().getFullYear();
+
+  /* --------------------------------------------------------
+     8. ATAJO ADMIN: Ctrl + Alt + A → abre el login del panel
+  -------------------------------------------------------- */
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.altKey && (e.key === 'a' || e.key === 'A')) {
+      e.preventDefault();
+      window.open('login.html', '_blank');
+    }
+  });
 })();
