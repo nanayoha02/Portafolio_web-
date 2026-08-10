@@ -127,7 +127,7 @@ async function cargarHabilidadesAdmin() {
         <button class="btn-delete-skill" onclick="eliminar('habilidades', '${h.id}')" title="Eliminar">&times;</button>
         <i class="${h.icono || 'fas fa-code'}"></i>
         <h4>${h.nombre}</h4>
-        <span class="skill-badge">${h.nivel || 'Junior'}</span>
+        <span class="skill-badge">${h.porcentaje != null ? h.porcentaje + '%' : 'Junior'}</span>
         <small class="skill-category">${h.categoria || ''}</small>
       </div>`).join('')
     : '<p class="text-muted">No hay habilidades aún.</p>';
@@ -340,7 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
       try {
         const payload = {
           nombre: document.getElementById('nombre').value,
-          nivel: document.getElementById('nivel-habilidad').value,
+          porcentaje: parseInt(document.getElementById('nivel-habilidad').value, 10) || 50,
           categoria: document.getElementById('categoria').value,
           icono: document.getElementById('icono').value || 'fas fa-code'
         };
