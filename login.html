@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -7,22 +7,22 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
   <style>
     :root {
-      --bg: #0f172a;
-      --bg-card: #1e293b;
-      --bg-input: #0f172a;
-      --primary: #6366f1;
-      --primary-light: #3b82f6;
-      --text-primary: #f1f5f9;
-      --text-secondary: #94a3b8;
-      --text-muted: #64748b;
-      --border-color: #334155;
-      --font-sans: 'Inter', -apple-system, sans-serif;
+      --bg: #0B0A0C;
+      --bg-card: #161319;
+      --bg-input: #0B0A0C;
+      --primary: #8B263E;
+      --primary-light: #8B263E;
+      --text-primary: #F3EFEA;
+      --text-secondary: #A098A8;
+      --text-muted: #6E6674;
+      --border-color: #2b252e;
+      --font-sans: 'Plus Jakarta Sans', -apple-system, sans-serif;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -36,7 +36,7 @@
       font-family: var(--font-sans);
       -webkit-font-smoothing: antialiased;
       background-image:
-        radial-gradient(600px at 10% 10%, rgba(99, 102, 241, 0.15), transparent 60%),
+        radial-gradient(600px at 10% 10%, rgba(139, 38, 62, 0.15), transparent 60%),
         radial-gradient(600px at 90% 90%, rgba(34, 197, 94, 0.08), transparent 60%);
     }
 
@@ -62,7 +62,7 @@
     }
 
     .login-container h2 span {
-      background: linear-gradient(90deg, #6366f1, #3b82f6);
+      background: linear-gradient(90deg, #8B263E, #8B263E);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -90,7 +90,7 @@
     .login-container input:focus {
       border-color: var(--primary);
       outline: none;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+      box-shadow: 0 0 0 3px rgba(139, 38, 62, 0.2);
     }
 
     .login-container input::placeholder { color: var(--text-muted); }
@@ -98,7 +98,7 @@
     .btn-login {
       width: 100%;
       padding: 14px;
-      background: linear-gradient(90deg, #6366f1, #3b82f6);
+      background: linear-gradient(90deg, #8B263E, #8B263E);
       color: #fff;
       border: none;
       border-radius: 14px;
@@ -108,12 +108,12 @@
       cursor: pointer;
       margin-top: 16px;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 18px rgba(99, 102, 241, 0.35);
+      box-shadow: 0 4px 18px rgba(139, 38, 62, 0.35);
     }
 
     .btn-login:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 26px rgba(99, 102, 241, 0.5);
+      box-shadow: 0 8px 26px rgba(139, 38, 62, 0.5);
     }
 
     .back-link {
@@ -132,6 +132,7 @@
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
     }
+      h1, h2 { font-family: 'Instrument Serif', Georgia, serif; font-weight: 400; }
   </style>
 </head>
 <body>

@@ -83,7 +83,7 @@
     return { text: '🟡 En Desarrollo', cls: 'status-dev' };
   }
 
-  function projectCard(p) {
+  function projectCard(p, i) {
     const status = statusInfo(p.estado);
     const techBadges = p.stack
       .map((t) => `<span class="tech-badge">${t}</span>`)
@@ -104,6 +104,7 @@
 
     return `
       <article class="project-card show" data-categorias="${p.categorias.join(',')}" data-estado="${p.estado}">
+        <span class="project-num">${String(i + 1).padStart(2, '0')}</span>
         ${img}
         <span class="status-badge ${status.cls}">${status.text}</span>
         <h3 class="project-title">${p.titulo}</h3>
@@ -196,7 +197,7 @@
         .map(([cat, items]) => `
           <div class="skill-card">
             <div class="flex items-center gap-3 mb-6">
-              <span class="w-10 h-10 rounded-lg bg-indigo-600/20 text-indigo-400 flex items-center justify-center"><i class="fa-solid fa-code"></i></span>
+              <span class="w-10 h-10 rounded-lg bg-[#8B263E]/25 text-[#C4506B] flex items-center justify-center"><i class="fa-solid fa-code"></i></span>
               <h3 class="text-lg font-bold text-white">${cat}</h3>
             </div>
             <div class="flex flex-wrap gap-2">
@@ -283,7 +284,7 @@
   const formFeedback = document.getElementById('form-feedback');
 
   if (contactForm) {
-    contactForm.addEventListener('submit', function (e) {
+    contactForm.addEventListener('submit', async function (e) {
       e.preventDefault();
 
       const nombre = document.getElementById('nombre');
@@ -299,8 +300,23 @@
       });
 
       if (valid) {
+        const btn = contactForm.querySelector('button[type="submit"]');
+        if (btn) btn.disabled = true;
+        let ok = false;
+        if (window._supabase) {
+          const { error } = await window._supabase.from('mensajes').insert([
+            { nombre: nombre.value.trim(), correo: correo.value.trim(), mensaje: mensaje.value.trim() },
+          ]);
+          ok = !error;
+        }
+        if (btn) btn.disabled = false;
+        formFeedback.textContent = ok
+          ? '¡Gracias! Tu mensaje se envió correctamente.'
+          : 'No se pudo enviar. Escríbeme por correo.';
+        formFeedback.classList.toggle('text-emerald-400', ok);
+        formFeedback.classList.toggle('text-red-400', !ok);
         formFeedback.classList.remove('hidden');
-        contactForm.reset();
+        if (ok) contactForm.reset();
         setTimeout(() => formFeedback.classList.add('hidden'), 6000);
       }
     });
@@ -322,9 +338,35 @@
     }
   });
 
+  /* Comando secreto: escribir "com9" (fuera de los campos de texto) abre el login */
+  const CLAVE = 'com9';
+  let tecleado = '';
+  let temporizador;
+  document.addEventListener('keydown', (e) => {
+    const t = e.target;
+    if (t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable)) return;
+    if (e.ctrlKey || e.altKey || e.metaKey || e.key.length !== 1) return;
+    tecleado = (tecleado + e.key.toLowerCase()).slice(-CLAVE.length);
+    clearTimeout(temporizador);
+    temporizador = setTimeout(() => { tecleado = ''; }, 2000);
+    if (tecleado === CLAVE) {
+      tecleado = '';
+      window.location.href = 'login.html';
+    }
+  });
+
   /* --------------------------------------------------------
      9. DESCARGAR CV: usa el PDF subido desde el panel admin
   -------------------------------------------------------- */
+  const qrImg = document.getElementById('qr-img');
+  const qrLabel = document.getElementById('qr-label');
+  function setQr(url, esCv) {
+    if (!qrImg) return;
+    qrImg.src = 'https://quickchart.io/qr?size=200&margin=1&dark=0B0A0C&light=F3EFEA&text=' + encodeURIComponent(url);
+    if (qrLabel) qrLabel.textContent = esCv ? 'Escanea para ver mi CV' : 'Escanea para abrir mi portafolio';
+  }
+  setQr(location.href, false);
+
   const cvBtn = document.getElementById('btn-cv');
   if (cvBtn && window._supabase) {
     window._supabase
@@ -335,8 +377,81 @@
       .then(({ data }) => {
         if (data && data.cv_url) {
           cvBtn.href = data.cv_url;
+          cvBtn.classList.remove('hidden');
+          const fb = document.getElementById('btn-cv-fallback');
+          if (fb) fb.classList.add('hidden');
+          setQr(data.cv_url, true);
         }
       })
       .catch(() => {});
   }
+
+  /* --------------------------------------------------------
+     10. EFECTO 3D: parallax del hero e inclinación de tarjetas
+  -------------------------------------------------------- */
+  const puedeMover = window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (puedeMover) {
+    const hero = document.getElementById('inicio');
+    if (hero) {
+      hero.addEventListener('mousemove', (e) => {
+        const r = hero.getBoundingClientRect();
+        hero.style.setProperty('--mx', (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
+        hero.style.setProperty('--my', (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
+      });
+      hero.addEventListener('mouseleave', () => {
+        hero.style.setProperty('--mx', 0);
+        hero.style.setProperty('--my', 0);
+      });
+    }
+
+    const TILT = '.project-card, .skill-card';
+    document.addEventListener('mousemove', (e) => {
+      const card = e.target.closest && e.target.closest(TILT);
+      if (!card) return;
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transition = 'transform .08s ease-out';
+      card.style.transform = `perspective(800px) rotateX(${(-y * 8).toFixed(2)}deg) rotateY(${(x * 8).toFixed(2)}deg) scale(1.03)`;
+    });
+    document.addEventListener('mouseout', (e) => {
+      const card = e.target.closest && e.target.closest(TILT);
+      if (!card || card.contains(e.relatedTarget)) return;
+      card.style.transition = 'transform .4s ease';
+      card.style.transform = '';
+    });
+  }
+
+  /* --------------------------------------------------------
+     11. CERTIFICACIONES Y TESTIMONIOS desde Supabase
+         (la sección solo aparece si hay datos)
+  -------------------------------------------------------- */
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+
+  async function cargarCertificacionesYTestimonios() {
+    if (!window._supabase) return;
+    try {
+      const cert = await window._supabase.from('certificaciones').select('*').order('created_at', { ascending: false });
+      if (!cert.error && cert.data && cert.data.length) {
+        document.getElementById('cert-grid').innerHTML = cert.data.map((c) => {
+          const icono = /^[\w\- ]+$/.test(c.icono || '') ? c.icono : 'fas fa-certificate';
+          return `<div class="info-card"><i class="${icono} text-[#C4506B]"></i><div><p class="font-semibold text-white">${esc(c.nombre)}</p><p class="text-sm text-[#A098A8]">${esc(c.emisor)}${c.anio ? ' · ' + esc(c.anio) : ''}</p></div></div>`;
+        }).join('');
+        document.getElementById('certificaciones').classList.remove('hidden');
+      }
+      const tes = await window._supabase.from('testimonios').select('*').order('created_at', { ascending: false });
+      if (!tes.error && tes.data && tes.data.length) {
+        document.getElementById('testi-grid').innerHTML = tes.data.map((t) => {
+          const avatar = t.avatar_url ? `<img src="${esc(t.avatar_url)}" alt="" class="w-10 h-10 rounded-full object-cover" loading="lazy" />` : '';
+          return `<figure class="glass-card flex flex-col gap-5"><blockquote class="testi-quote">“${esc(t.texto)}”</blockquote><figcaption class="flex items-center gap-3">${avatar}<div><p class="font-semibold text-white">${esc(t.nombre)}</p><p class="text-sm text-[#A098A8]">${esc(t.rol)}</p></div></figcaption></figure>`;
+        }).join('');
+        document.getElementById('testimonios').classList.remove('hidden');
+      }
+    } catch (e) {
+      /* Si falla, las secciones siguen ocultas */
+    }
+  }
+  cargarCertificacionesYTestimonios();
 })();

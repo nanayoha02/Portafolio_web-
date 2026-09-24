@@ -25,11 +25,5 @@ CREATE TABLE IF NOT EXISTS certificaciones (
   created_at timestamptz DEFAULT now()
 );
 
--- 4) Permite que el sitio público y el panel admin lean/escriban
---    con la API key publicable (proyecto 100% client-side).
-ALTER TABLE perfil DISABLE ROW LEVEL SECURITY;
-ALTER TABLE proyectos DISABLE ROW LEVEL SECURITY;
-ALTER TABLE habilidades DISABLE ROW LEVEL SECURITY;
-ALTER TABLE sobre_mi DISABLE ROW LEVEL SECURITY;
-ALTER TABLE testimonios DISABLE ROW LEVEL SECURITY;
-ALTER TABLE certificaciones DISABLE ROW LEVEL SECURITY;
+-- 4) La seguridad (RLS) ahora se configura con supabase/schema-seguro.sql.
+--    No desactives RLS: la clave publicable es visible en el navegador.
