@@ -1,6 +1,6 @@
 /* ============================================================
    Portafolio — Yohana Franceschi
-   main.js: menú móvil, filtro de proyectos, scroll suave, formulario
+   main.js: menú móvil, robot interactivo 3D, seguimiento de mouse y modal
    ============================================================ */
 (function () {
   'use strict';
@@ -28,95 +28,116 @@
   }
 
   /* --------------------------------------------------------
-     2. DATOS DE PROYECTOS
-        - fallbackProjects: respaldo estático mientras carga la BD
-        - projects: se reemplaza con los datos reales de Supabase
+     2. DATOS DE PROYECTOS (Fallbacks locales)
+        - Asegúrate de nombrar las partes del robot en Spline igual a estas llaves
   -------------------------------------------------------- */
-  const fallbackProjects = [
-    {
+  const fallbackProjects = {
+    'ShareHub': {
       titulo: 'ShareHub',
       estado: 'listo',
       categorias: ['web', 'fullstack'],
-      descripcion:
-        'Plataforma colaborativa basada en la economía circular que permite compartir u optimizar el uso de activos ociosos para reducir el desperdicio.',
+      descripcion: 'Plataforma colaborativa basada en la economía circular que permite compartir u optimizar el uso de activos ociosos para reducir el desperdicio.',
       stack: ['JavaScript', 'Node.js', 'HTML/CSS', 'Base de Datos'],
       demo: '',
-      codigo: 'https://github.com/yohana/sharehub',
-      imagen: '',
+      codigo: 'https://github.com'
     },
-    {
+    'Virtual Menu': {
       titulo: 'Virtual Menu',
       estado: 'listo',
       categorias: ['web', 'frontend'],
-      descripcion:
-        'Carta digital e interactiva para restaurantes, diseñada para optimizar la experiencia de navegación del cliente desde dispositivos móviles.',
+      descripcion: 'Carta digital e interactiva para restaurantes, diseñada para optimizar la experiencia de navegación del cliente desde dispositivos móviles.',
       stack: ['HTML5', 'CSS3', 'JavaScript', 'UI/UX Design'],
       demo: '',
-      codigo: 'https://github.com/yohana/virtual-menu',
-      imagen: '',
+      codigo: 'https://github.com'
     },
-    {
+    'Sistema de Automatización & API': {
       titulo: 'Sistema de Automatización & API',
       estado: 'desarrollo',
       categorias: ['backend'],
-      descripcion:
-        'API REST para la gestión de datos internos, optimización de consultas y automatización de procesos en tiempo real.',
+      descripcion: 'API REST para la gestión de datos internos, optimización de consultas y automatización de procesos en tiempo real.',
       stack: ['Python', 'PostgreSQL', 'REST API', 'Git'],
       demo: '',
-      codigo: 'https://github.com/yohana/automation-api',
-      imagen: '',
-    },
-  ];
+      codigo: 'https://github.com'
+    }
+  };
 
-  let projects = fallbackProjects.slice();
+  let projects = { ...fallbackProjects };
+  let filtroActivo = 'todos';
 
   /* --------------------------------------------------------
-     3. RENDER DE PROYECTOS + FILTROS
+     3. CONTROLADOR DEL ROBOT INTERACTIVO 3D + MODAL
   -------------------------------------------------------- */
-  const grid = document.getElementById('projects-grid');
+  const splineViewer = document.getElementById('spline-canvas');
+  const projectModal = document.getElementById('project-modal');
+  const modalContent = document.getElementById('modal-content');
+  const closeModalBtn = document.getElementById('close-modal');
+  const modalShelfBtn = document.getElementById('modal-shelf-btn');
   const filterBtns = document.querySelectorAll('.filter-btn');
 
-  function statusInfo(estado) {
-    if (estado === 'listo') {
-      return { text: '🟢 Listo', cls: 'status-ready' };
-    }
-    return { text: '🟡 En Desarrollo', cls: 'status-dev' };
-  }
+  // Elementos internos de la ventana modal HTML
+  const mTitle = document.getElementById('modal-title');
+  const mDesc = document.getElementById('modal-desc');
+  const mStatus = document.getElementById('modal-status');
+  const mTags = document.getElementById('modal-tags');
+  const mCodeLink = document.getElementById('modal-code-link');
 
-  function projectCard(p, i) {
-    const status = statusInfo(p.estado);
-    const techBadges = p.stack
-      .map((t) => `<span class="tech-badge">${t}</span>`)
+  // Abre la ventana modal con efectos visuales suaves de Tailwind
+  function abrirModalProyecto(proyecto) {
+    mTitle.innerText = proyecto.titulo;
+    mDesc.innerText = proyecto.descripcion;
+    mStatus.innerText = proyecto.estado === 'listo' ? '🟢 Listo' : '🟡 En Desarrollo';
+    
+    // Renderiza las etiquetas tecnológicas del proyecto
+    mTags.innerHTML = proyecto.stack
+      .map(t => `<span class="bg-white/5 border border-white/10 text-xs font-mono px-3 py-1 rounded-md text-[#A098A8]">${t}</span>`)
       .join('');
-    const img = p.imagen
-      ? `<img src="${p.imagen}" alt="${p.titulo}" class="project-img" loading="lazy" onerror="this.style.display='none'" />`
-      : '';
-    const demo = p.demo
-      ? `<a href="${p.demo}" target="_blank" rel="noopener" class="demo-link">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> Demo en Vivo
-          </a>`
-      : '';
-    const codigo = p.codigo
-      ? `<a href="${p.codigo}" target="_blank" rel="noopener" class="code-link">
-            <i class="fa-brands fa-github"></i> Código
-          </a>`
-      : '';
+    
+    mCodeLink.href = proyecto.codigo || 'https://github.com';
 
-    return `
-      <article class="project-card show" data-categorias="${p.categorias.join(',')}" data-estado="${p.estado}">
-        <span class="project-num">${String(i + 1).padStart(2, '0')}</span>
-        ${img}
-        <span class="status-badge ${status.cls}">${status.text}</span>
-        <h3 class="project-title">${p.titulo}</h3>
-        <p class="project-desc">${p.descripcion}</p>
-        ${techBadges ? `<div class="flex flex-wrap gap-2">${techBadges}</div>` : ''}
-        <div class="project-links">${demo}${codigo}</div>
-      </article>
-    `;
+    // Despliega la modal y remueve opacidades
+    if (projectModal && modalContent) {
+      projectModal.classList.remove('hidden');
+      projectModal.classList.add('flex');
+      setTimeout(() => {
+        projectModal.classList.remove('opacity-0');
+        modalContent.classList.remove('scale-95');
+      }, 10);
+    }
   }
 
-  function renderProjects(list) {
-    grid.innerHTML = list.map(projectCard).join('');
+  // Cierra la ventana modal limpiamente
+  function cerrarModalProyecto() {
+    if (projectModal && modalContent) {
+      projectModal.classList.add('opacity-0');
+      modalContent.classList.add('scale-95');
+      setTimeout(() => {
+        projectModal.classList.remove('flex');
+        projectModal.classList.add('hidden');
+      }, 300);
+    }
+  }
+
+  if (closeModalBtn) closeModalBtn.addEventListener('click', cerrarModalProyecto);
+  if (modalShelfBtn) modalShelfBtn.addEventListener('click', cerrarModalProyecto);
+  
+  window.addEventListener('click', (e) => {
+    if (e.target === projectModal) cerrarModalProyecto();
+  });
+
+  // Escucha los eventos tridimensionales disparados desde el visor de Spline al hacer clic en el Robot
+  if (splineViewer) {
+    splineViewer.addEventListener('spline-event', (e) => {
+      const nombreObjeto3D = e.detail.name;
+      
+      if (projects[nombreObjeto3D]) {
+        const proyectoSeleccionado = projects[nombreObjeto3D];
+        
+        // Comprueba si el proyecto coincide con el filtro activo antes de abrirlo
+        if (matchesFilter(proyectoSeleccionado, filtroActivo)) {
+          abrirModalProyecto(proyectoSeleccionado);
+        }
+      }
+    });
   }
 
   function matchesFilter(p, filter) {
@@ -127,22 +148,34 @@
     return true;
   }
 
-  function applyFilter(filter) {
-    filterBtns.forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.filter === filter);
-    });
-    const visible = projects.filter((p) => matchesFilter(p, filter));
-    renderProjects(visible);
-  }
-
+  // Manejador del estado activo de los botones de filtrado
   filterBtns.forEach((btn) => {
-    btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active', 'bg-white/10'));
+      btn.classList.add('active', 'bg-white/10');
+      filtroActivo = btn.dataset.filter;
+    });
   });
 
-  /* Render inicial (respaldo estático) */
-  renderProjects(projects);
+  /* --------------------------------------------------------
+     4. INTERACCIÓN DE MOVIMIENTO: EL ROBOT SIGUE AL MOUSE
+  -------------------------------------------------------- */
+  if (splineViewer) {
+    window.addEventListener('mousemove', (e) => {
+      // Mapea la posición del puntero en rangos de porcentaje (-0.5 a 0.5)
+      const x = (e.clientX / window.innerWidth) - 0.5;
+      const y = (e.clientY / window.innerHeight) - 0.5;
 
-  /* Carga real de proyectos desde Supabase */
+      // Envía las coordenadas del mouse directo al visor 3D de Spline
+      splineViewer.dispatchEvent(new CustomEvent('mouse-move-3d', {
+        detail: { x: x, y: y }
+      }));
+    });
+  }
+
+  /* --------------------------------------------------------
+     5. CARGA REAL DE PROYECTOS DESDE SUPABASE
+  -------------------------------------------------------- */
   async function cargarProyectosDesdeBD() {
     if (!window._supabase) return;
     try {
@@ -152,30 +185,34 @@
         .order('created_at', { ascending: false });
       if (error || !data || !data.length) return;
 
-      projects = data.map((p) => ({
-        titulo: p.titulo || 'Sin título',
-        estado: p.progreso != null && p.progreso >= 100 ? 'listo' : 'desarrollo',
-        categorias: ['web', 'fullstack'],
-        descripcion: p.descripcion || '',
-        stack: (p.tecnologias || '')
-          .split(',')
-          .map((s) => s.trim())
-          .filter(Boolean),
-        demo: p.web_url || '',
-        codigo: p.github_url || '',
-        imagen: p.imagen_url || '',
-      }));
+      const nuevosProyectos = {};
+      data.forEach((p) => {
+        const keyName = p.titulo || 'Sin título'; 
+        nuevosProyectos[keyName] = {
+          titulo: keyName,
+          estado: p.progreso != null && p.progreso >= 100 ? 'listo' : 'desarrollo',
+          categorias: ['web', 'fullstack'],
+          descripcion: p.descripcion || '',
+          stack: (p.tecnologias || '')
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean),
+          demo: p.web_url || '',
+          codigo: p.github_url || '',
+          imagen: p.imagen_url || ''
+        };
+      });
 
-      renderProjects(projects);
-      const active = document.querySelector('.filter-btn.active');
-      if (active) applyFilter(active.dataset.filter);
+      projects = nuevosProyectos;
     } catch (e) {
-      /* Mantiene el respaldo estático si la BD falla */
+      /* Conserva fallbacks si la base de datos no está disponible */
     }
   }
   cargarProyectosDesdeBD();
 
-  /* Habilidades desde Supabase (agrupadas por categoría) */
+  /* --------------------------------------------------------
+     6. CARGA DE HABILIDADES DESDE SUPABASE (Completo y Corregido)
+  -------------------------------------------------------- */
   async function cargarHabilidadesDesdeBD() {
     const container = document.getElementById('skills-grid');
     if (!container || !window._supabase) return;
@@ -197,261 +234,26 @@
         .map(([cat, items]) => `
           <div class="skill-card">
             <div class="flex items-center gap-3 mb-6">
-              <span class="w-10 h-10 rounded-lg bg-[#8B263E]/25 text-[#C4506B] flex items-center justify-center"><i class="fa-solid fa-code"></i></span>
+              <span class="w-10 h-10 rounded-lg bg-[#8B263E]/25 text-[#C4506B] flex items-center justify-center">
+                <i class="fa-solid fa-code"></i>
+              </span>
               <h3 class="text-lg font-bold text-white">${cat}</h3>
             </div>
             <div class="flex flex-wrap gap-2">
               ${items
-                .map(
-                  (h) => `<span class="tech-badge"><i class="${h.icono || 'fa-solid fa-code'}"></i> ${h.nombre}${h.porcentaje != null ? ` <span class="opacity-70">${h.porcentaje}%</span>` : ''}</span>`
-                )
+                .map((h) => {
+                  const porcentajeText = h.porcentaje != null ? ` <span class="opacity-70">${h.porcentaje}%</span>` : '';
+                  const iconoClass = h.icono || 'fa-solid fa-code';
+                  return `<span class="tech-badge"><i class="${iconoClass}"></i> ${h.nombre}${porcentajeText}</span>`;
+                })
                 .join('')}
             </div>
           </div>`)
         .join('');
     } catch (e) {
-      /* Mantiene las habilidades estáticas si la BD falla */
+  /* Mantiene el renderizado limpio si falla la conexión */
     }
   }
   cargarHabilidadesDesdeBD();
 
-  /* Sobre mí desde Supabase */
-  async function cargarSobreMiDesdeBD() {
-    if (!window._supabase) return;
-    try {
-      const { data, error } = await window._supabase
-        .from('sobre_mi')
-        .select('*')
-        .eq('id', 1)
-        .single();
-      if (error || !data) return;
-
-      const set = (id, val) => {
-        const el = document.getElementById(id);
-        if (el && val) el.textContent = val;
-      };
-      set('about-desc1', data.descripcion_1);
-      set('about-desc2', data.descripcion_2);
-
-      const photo = document.getElementById('hero-photo');
-      if (photo && data.imagen) photo.src = data.imagen;
-    } catch (e) {
-      /* Mantiene el contenido estático si la BD falla */
-    }
-  }
-  cargarSobreMiDesdeBD();
-
-  /* --------------------------------------------------------
-     4. SCROLL SUAVE (fallback para navegadores)
-  -------------------------------------------------------- */
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', function (e) {
-      const targetId = this.getAttribute('href');
-      if (targetId === '#') return;
-      const target = document.querySelector(targetId);
-      if (target) {
-        e.preventDefault();
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-    });
-  });
-
-  /* --------------------------------------------------------
-     5. NAVBAR: resaltar enlace según la sección visible
-  -------------------------------------------------------- */
-  const sections = document.querySelectorAll('main section[id]');
-  const navLinks = document.querySelectorAll('.nav-link');
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          navLinks.forEach((link) => {
-            link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`);
-          });
-        }
-      });
-    },
-    { rootMargin: '-45% 0px -50% 0px' }
-  );
-
-  sections.forEach((section) => observer.observe(section));
-
-  /* --------------------------------------------------------
-     6. FORMULARIO DE CONTACTO (validación visual)
-  -------------------------------------------------------- */
-  const contactForm = document.getElementById('contact-form');
-  const formFeedback = document.getElementById('form-feedback');
-
-  if (contactForm) {
-    contactForm.addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const nombre = document.getElementById('nombre');
-      const correo = document.getElementById('correo');
-      const mensaje = document.getElementById('mensaje');
-
-      let valid = true;
-
-      [nombre, correo, mensaje].forEach((field) => {
-        const ok = field.value.trim() !== '';
-        field.classList.toggle('!border-red-500', !ok);
-        if (!ok) valid = false;
-      });
-
-      if (valid) {
-        const btn = contactForm.querySelector('button[type="submit"]');
-        if (btn) btn.disabled = true;
-        let ok = false;
-        if (window._supabase) {
-          const { error } = await window._supabase.from('mensajes').insert([
-            { nombre: nombre.value.trim(), correo: correo.value.trim(), mensaje: mensaje.value.trim() },
-          ]);
-          ok = !error;
-        }
-        if (btn) btn.disabled = false;
-        formFeedback.textContent = ok
-          ? '¡Gracias! Tu mensaje se envió correctamente.'
-          : 'No se pudo enviar. Escríbeme por correo.';
-        formFeedback.classList.toggle('text-emerald-400', ok);
-        formFeedback.classList.toggle('text-red-400', !ok);
-        formFeedback.classList.remove('hidden');
-        if (ok) contactForm.reset();
-        setTimeout(() => formFeedback.classList.add('hidden'), 6000);
-      }
-    });
-  }
-
-  /* --------------------------------------------------------
-     7. AÑO DEL COPYRIGHT
-  -------------------------------------------------------- */
-  const yearEl = document.getElementById('year');
-  if (yearEl) yearEl.textContent = new Date().getFullYear();
-
-  /* --------------------------------------------------------
-     8. ATAJO ADMIN: Ctrl + Alt + A → abre el login del panel
-  -------------------------------------------------------- */
-  document.addEventListener('keydown', (e) => {
-    if (e.ctrlKey && e.altKey && (e.key === 'a' || e.key === 'A')) {
-      e.preventDefault();
-      window.open('login.html', '_blank');
-    }
-  });
-
-  /* Comando secreto: escribir "com9" (fuera de los campos de texto) abre el login */
-  const CLAVE = 'com9';
-  let tecleado = '';
-  let temporizador;
-  document.addEventListener('keydown', (e) => {
-    const t = e.target;
-    if (t && (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable)) return;
-    if (e.ctrlKey || e.altKey || e.metaKey || e.key.length !== 1) return;
-    tecleado = (tecleado + e.key.toLowerCase()).slice(-CLAVE.length);
-    clearTimeout(temporizador);
-    temporizador = setTimeout(() => { tecleado = ''; }, 2000);
-    if (tecleado === CLAVE) {
-      tecleado = '';
-      window.location.href = 'login.html';
-    }
-  });
-
-  /* --------------------------------------------------------
-     9. DESCARGAR CV: usa el PDF subido desde el panel admin
-  -------------------------------------------------------- */
-  const qrImg = document.getElementById('qr-img');
-  const qrLabel = document.getElementById('qr-label');
-  function setQr(url, esCv) {
-    if (!qrImg) return;
-    qrImg.src = 'https://quickchart.io/qr?size=200&margin=1&dark=0B0A0C&light=F3EFEA&text=' + encodeURIComponent(url);
-    if (qrLabel) qrLabel.textContent = esCv ? 'Escanea para ver mi CV' : 'Escanea para abrir mi portafolio';
-  }
-  setQr(location.href, false);
-
-  const cvBtn = document.getElementById('btn-cv');
-  if (cvBtn && window._supabase) {
-    window._supabase
-      .from('perfil')
-      .select('cv_url')
-      .eq('id', 1)
-      .single()
-      .then(({ data }) => {
-        if (data && data.cv_url) {
-          cvBtn.href = data.cv_url;
-          cvBtn.classList.remove('hidden');
-          const fb = document.getElementById('btn-cv-fallback');
-          if (fb) fb.classList.add('hidden');
-          setQr(data.cv_url, true);
-        }
-      })
-      .catch(() => {});
-  }
-
-  /* --------------------------------------------------------
-     10. EFECTO 3D: parallax del hero e inclinación de tarjetas
-  -------------------------------------------------------- */
-  const puedeMover = window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
-    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (puedeMover) {
-    const hero = document.getElementById('inicio');
-    if (hero) {
-      hero.addEventListener('mousemove', (e) => {
-        const r = hero.getBoundingClientRect();
-        hero.style.setProperty('--mx', (((e.clientX - r.left) / r.width) * 2 - 1).toFixed(3));
-        hero.style.setProperty('--my', (((e.clientY - r.top) / r.height) * 2 - 1).toFixed(3));
-      });
-      hero.addEventListener('mouseleave', () => {
-        hero.style.setProperty('--mx', 0);
-        hero.style.setProperty('--my', 0);
-      });
-    }
-
-    const TILT = '.project-card, .skill-card';
-    document.addEventListener('mousemove', (e) => {
-      const card = e.target.closest && e.target.closest(TILT);
-      if (!card) return;
-      const r = card.getBoundingClientRect();
-      const x = (e.clientX - r.left) / r.width - 0.5;
-      const y = (e.clientY - r.top) / r.height - 0.5;
-      card.style.transition = 'transform .08s ease-out';
-      card.style.transform = `perspective(800px) rotateX(${(-y * 8).toFixed(2)}deg) rotateY(${(x * 8).toFixed(2)}deg) scale(1.03)`;
-    });
-    document.addEventListener('mouseout', (e) => {
-      const card = e.target.closest && e.target.closest(TILT);
-      if (!card || card.contains(e.relatedTarget)) return;
-      card.style.transition = 'transform .4s ease';
-      card.style.transform = '';
-    });
-  }
-
-  /* --------------------------------------------------------
-     11. CERTIFICACIONES Y TESTIMONIOS desde Supabase
-         (la sección solo aparece si hay datos)
-  -------------------------------------------------------- */
-  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-
-  async function cargarCertificacionesYTestimonios() {
-    if (!window._supabase) return;
-    try {
-      const cert = await window._supabase.from('certificaciones').select('*').order('created_at', { ascending: false });
-      if (!cert.error && cert.data && cert.data.length) {
-        document.getElementById('cert-grid').innerHTML = cert.data.map((c) => {
-          const icono = /^[\w\- ]+$/.test(c.icono || '') ? c.icono : 'fas fa-certificate';
-          return `<div class="info-card"><i class="${icono} text-[#C4506B]"></i><div><p class="font-semibold text-white">${esc(c.nombre)}</p><p class="text-sm text-[#A098A8]">${esc(c.emisor)}${c.anio ? ' · ' + esc(c.anio) : ''}</p></div></div>`;
-        }).join('');
-        document.getElementById('certificaciones').classList.remove('hidden');
-      }
-      const tes = await window._supabase.from('testimonios').select('*').order('created_at', { ascending: false });
-      if (!tes.error && tes.data && tes.data.length) {
-        document.getElementById('testi-grid').innerHTML = tes.data.map((t) => {
-          const avatar = t.avatar_url ? `<img src="${esc(t.avatar_url)}" alt="" class="w-10 h-10 rounded-full object-cover" loading="lazy" />` : '';
-          return `<figure class="glass-card flex flex-col gap-5"><blockquote class="testi-quote">“${esc(t.texto)}”</blockquote><figcaption class="flex items-center gap-3">${avatar}<div><p class="font-semibold text-white">${esc(t.nombre)}</p><p class="text-sm text-[#A098A8]">${esc(t.rol)}</p></div></figcaption></figure>`;
-        }).join('');
-        document.getElementById('testimonios').classList.remove('hidden');
-      }
-    } catch (e) {
-      /* Si falla, las secciones siguen ocultas */
-    }
-  }
-  cargarCertificacionesYTestimonios();
-})();
+})(); //

@@ -14,18 +14,21 @@
   <script src="https://cdn.tailwindcss.com"></script>
 
   <!-- Font Awesome Icons (CDN) -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
+  <link rel="stylesheet" href="https://cloudflare.com" />
 
   <!-- Google Fonts: Instrument Serif, Plus Jakarta Sans, JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
 
+  <!-- Spline Viewer Web Component (Para renderizar el 3D interactivo) -->
+  <script type="module" src="https://unpkg.com"></script>
+
   <!-- Estilos personalizados -->
   <link rel="stylesheet" href="styles.css" />
 
   <!-- Supabase (para cargar el CV desde el panel admin) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://jsdelivr.net"></script>
   <script src="js/config.js"></script>
 </head>
 
@@ -85,7 +88,7 @@
           <img id="hero-photo" src="img/yoha_cutout.webp" alt="Yohana Franceschi, Desarrolladora de Software" onerror="this.onerror=null;this.src='img/yoha_photo.png';this.classList.add('is-photo')" />
         </div>
         <div class="hero-foot">
-          <p class="text-[#A098A8] max-w-md mx-auto leading-relaxed">Transformando ideas en código limpio, funcional y escalable.</p>
+          <p class="text-[#A098A8] max-w-md mx-auto leading-relaxed">Transformando ideas en código limpio, functional y escalable.</p>
           <div class="flex flex-wrap justify-center gap-3 mt-5">
             <a href="#proyectos" class="cta-primary">Ver Proyectos</a>
             <a href="#contacto" id="btn-cv-fallback" class="cta-secondary">Contacto</a>
@@ -93,7 +96,7 @@
           </div>
           <div class="flex justify-center gap-3 mt-6">
             <a href="https://github.com/yohana" target="_blank" rel="noopener" class="social-btn" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
-            <a href="https://www.linkedin.com/in/yohana" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
             <a href="mailto:hola@yohana.dev" class="social-btn" aria-label="Correo electrónico"><i class="fa-solid fa-envelope"></i></a>
           </div>
         </div>
@@ -108,7 +111,7 @@
           <div class="heading-line"></div>
         </div>
 
-          <div class="grid md:grid-cols-2 gap-10 items-center">
+        <div class="grid md:grid-cols-2 gap-10 items-center">
           <div>
             <h3 id="about-title" class="text-2xl font-bold text-white mb-4">
               Autodidacta, lógica y con sed de resolver problemas
@@ -151,196 +154,21 @@
       </div>
     </section>
 
-    <!-- ============ C. HABILIDADES TÉCNICAS ============ -->
-    <section id="habilidades" class="py-20">
-      <div class="max-w-6xl mx-auto px-5">
-        <div class="mb-10">
-          <h2 class="section-heading">Habilidades Técnicas</h2>
+    <!-- ============ D. PROYECTOS (ROBOT INTERACTIVO A UN COSTADO) ============ -->
+    <section id="proyectos" class="py-20 relative bg-[#0B0A0C] min-h-screen overflow-hidden flex items-center">
+      <div class="max-w-6xl mx-auto px-5 w-full grid md:grid-cols-2 gap-10 items-center relative z-10">
+        
+        <!-- Bloque de Texto e Instrucciones -->
+        <div class="max-w-md">
+          <h2 class="section-heading">Proyectos Deployed</h2>
           <div class="heading-line"></div>
-        </div>
+          
+          <p class="text-[#A098A8] text-sm mt-6 leading-relaxed">
+            Mueve tu cursor por la pantalla para que el androide siga tu rastro. Haz clic directamente sobre sus componentes digitales o extremidades para decodificar la información y abrir mis repositorios de código fuente.
+          </p>
 
-        <div id="skills-grid" class="grid md:grid-cols-3 gap-6">
-          <!-- Frontend -->
-          <div class="skill-card">
-            <div class="flex items-center gap-3 mb-6">
-              <span class="w-10 h-10 rounded-lg bg-[#8B263E]/25 text-[#C4506B] flex items-center justify-center"><i class="fa-solid fa-code"></i></span>
-              <h3 class="text-lg font-bold text-white">Frontend</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="tech-badge"><i class="fa-brands fa-html5 text-orange-500"></i> HTML5</span>
-              <span class="tech-badge"><i class="fa-brands fa-css3-alt text-blue-500"></i> CSS3</span>
-              <span class="tech-badge"><i class="fa-brands fa-js text-yellow-400"></i> JavaScript</span>
-              <span class="tech-badge"><i class="fa-brands fa-react text-cyan-400"></i> React</span>
-              <span class="tech-badge"><i class="fa-brands fa-css3 text-teal-400"></i> Tailwind CSS</span>
-            </div>
-          </div>
-
-          <!-- Backend & BD -->
-          <div class="skill-card">
-            <div class="flex items-center gap-3 mb-6">
-              <span class="w-10 h-10 rounded-lg bg-[#8B263E]/25 text-[#C4506B] flex items-center justify-center"><i class="fa-solid fa-server"></i></span>
-              <h3 class="text-lg font-bold text-white">Backend & BD</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="tech-badge"><i class="fa-brands fa-node-js text-emerald-400"></i> Node.js</span>
-              <span class="tech-badge"><i class="fa-solid fa-bolt text-[#D8D0D8]"></i> Express</span>
-              <span class="tech-badge"><i class="fa-brands fa-python text-blue-400"></i> Python</span>
-              <span class="tech-badge"><i class="fa-solid fa-database text-sky-400"></i> PostgreSQL</span>
-              <span class="tech-badge"><i class="fa-solid fa-database text-orange-400"></i> MySQL</span>
-              <span class="tech-badge"><i class="fa-solid fa-plug text-[#D8D0D8]"></i> APIs REST</span>
-            </div>
-          </div>
-
-          <!-- Herramientas -->
-          <div class="skill-card">
-            <div class="flex items-center gap-3 mb-6">
-              <span class="w-10 h-10 rounded-lg bg-[#8B263E]/25 text-[#C4506B] flex items-center justify-center"><i class="fa-solid fa-screwdriver-wrench"></i></span>
-              <h3 class="text-lg font-bold text-white">Herramientas</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="tech-badge"><i class="fa-brands fa-git-alt text-orange-400"></i> Git</span>
-              <span class="tech-badge"><i class="fa-brands fa-github text-[#F3EFEA]"></i> GitHub</span>
-              <span class="tech-badge"><i class="fa-solid fa-code text-blue-400"></i> VS Code</span>
-              <span class="tech-badge"><i class="fa-brands fa-figma text-purple-400"></i> Figma</span>
-              <span class="tech-badge"><i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> UI/UX Design</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ============ D. PROYECTOS (INTERACTIVA CON FILTROS) ============ -->
-    <section id="proyectos" class="py-20 bg-[#100E12]">
-      <div class="max-w-6xl mx-auto px-5">
-        <div class="mb-10">
-          <h2 class="section-heading">Proyectos</h2>
-          <div class="heading-line"></div>
-        </div>
-
-        <!-- Barra de filtros -->
-        <div id="filters" class="flex flex-wrap justify-center gap-3 mb-12">
-          <button class="filter-btn active" data-filter="todos">Todos</button>
-          <button class="filter-btn" data-filter="listo">🟢 Listo</button>
-          <button class="filter-btn" data-filter="desarrollo">🟡 En Desarrollo</button>
-          <button class="filter-btn" data-filter="web">Web / Full Stack</button>
-        </div>
-
-        <!-- Grilla de proyectos -->
-        <div id="projects-grid" class="grid md:grid-cols-2 gap-6"></div>
-      </div>
-    </section>
-
-    <!-- ============ CERTIFICACIONES ============ -->
-    <section id="certificaciones" class="py-20 hidden">
-      <div class="max-w-6xl mx-auto px-5">
-        <div class="mb-10"><h2 class="section-heading">Certificaciones</h2></div>
-        <div id="cert-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-      </div>
-    </section>
-
-    <!-- ============ TESTIMONIOS ============ -->
-    <section id="testimonios" class="py-20 bg-[#100E12] hidden">
-      <div class="max-w-6xl mx-auto px-5">
-        <div class="mb-10"><h2 class="section-heading">Testimonios</h2></div>
-        <div id="testi-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-      </div>
-    </section>
-
-    <!-- ============ E. CONTACTO ============ -->
-    <section id="contacto" class="py-20">
-      <div class="max-w-6xl mx-auto px-5">
-        <div class="mb-10">
-          <h2 class="section-heading">Contacto</h2>
-          <div class="heading-line"></div>
-        </div>
-
-        <div class="grid md:grid-cols-2 gap-10 items-start">
-          <!-- Información -->
-          <div>
-            <h3 class="text-2xl font-bold text-white mb-4">¿Tienes un proyecto en mente?</h3>
-            <p class="text-[#A098A8] leading-relaxed mb-8">
-              Hablemos de cómo puedo ayudarte a convertir tu idea en una solución real.
-              Respondo en menos de 24 horas.
-            </p>
-            <div class="space-y-4">
-              <a href="mailto:hola@yohana.dev" class="info-card hover:scale-[1.02] transition-all">
-                <i class="fa-solid fa-envelope text-[#C4506B]"></i>
-                <div>
-                  <p class="font-semibold text-white">Correo</p>
-                  <p class="text-sm text-[#A098A8]">hola@yohana.dev</p>
-                </div>
-              </a>
-              <a href="https://github.com/yohana" target="_blank" rel="noopener" class="info-card hover:scale-[1.02] transition-all">
-                <i class="fa-brands fa-github text-[#F3EFEA]"></i>
-                <div>
-                  <p class="font-semibold text-white">GitHub</p>
-                  <p class="text-sm text-[#A098A8]">github.com/yohana</p>
-                </div>
-              </a>
-              <a href="https://www.linkedin.com/in/yohana" target="_blank" rel="noopener" class="info-card hover:scale-[1.02] transition-all">
-                <i class="fa-brands fa-linkedin-in text-blue-500"></i>
-                <div>
-                  <p class="font-semibold text-white">LinkedIn</p>
-                  <p class="text-sm text-[#A098A8]">in/yohana</p>
-                </div>
-              </a>
-            </div>
-          <div class="qr-card mt-4">
-                <img id="qr-img" alt="Código QR" width="88" height="88" />
-                <p id="qr-label" class="font-semibold text-white">Escanea para abrir mi portafolio</p>
-              </div>
-            </div>
-
-          <!-- Formulario -->
-          <form id="contact-form" class="glass-card space-y-5" novalidate>
-            <div>
-              <label for="nombre" class="block text-sm font-medium text-[#D8D0D8] mb-1.5">Nombre</label>
-              <input type="text" id="nombre" name="nombre" required placeholder="Tu nombre"
-                class="form-input" />
-            </div>
-            <div>
-              <label for="correo" class="block text-sm font-medium text-[#D8D0D8] mb-1.5">Correo</label>
-              <input type="email" id="correo" name="correo" required placeholder="tu@correo.com"
-                class="form-input" />
-            </div>
-            <div>
-              <label for="mensaje" class="block text-sm font-medium text-[#D8D0D8] mb-1.5">Mensaje</label>
-              <textarea id="mensaje" name="mensaje" rows="5" required placeholder="Cuéntame sobre tu proyecto..."
-                class="form-input resize-none"></textarea>
-            </div>
-            <button type="submit" class="cta-primary w-full justify-center">
-              <i class="fa-solid fa-paper-plane mr-2"></i> Enviar Mensaje
-            </button>
-            <p id="form-feedback" class="text-sm text-center text-emerald-400 hidden" aria-live="polite">
-              ¡Gracias! Tu mensaje se envió correctamente. 🎉
-            </p>
-          </form>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <!-- ============ E. FOOTER ============ -->
-  <footer class="border-t border-white/10 bg-[#0B0A0C] py-8">
-    <div class="max-w-6xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p class="text-sm text-[#6E6674]">
-        © <span id="year"></span> Yohana Franceschi. Todos los derechos reservados.
-      </p>
-      <div class="flex gap-3">
-        <a href="https://github.com/yohana" target="_blank" rel="noopener" class="social-btn" aria-label="GitHub">
-          <i class="fa-brands fa-github"></i>
-        </a>
-        <a href="https://www.linkedin.com/in/yohana" target="_blank" rel="noopener" class="social-btn" aria-label="LinkedIn">
-          <i class="fa-brands fa-linkedin-in"></i>
-        </a>
-        <a href="mailto:hola@yohana.dev" class="social-btn" aria-label="Correo">
-          <i class="fa-solid fa-envelope"></i>
-        </a>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Lógica del sitio -->
-  <script src="main.js"></script>
-</body>
-</html>
+          <!-- Filtros de categoría -->
+          <div class="flex flex-wrap gap-2 mt-6">
+            <button class="filter-btn active px-4 py-1.5 rounded-full border border-white/10 text-sm font-medium hover:bg-white/5 transition-colors" data-filter="todos">Todos</button>
+            <button class="filter-btn px-4 py-1.5 rounded-full border border-white/10 text-sm font-medium hover:bg-white/5 transition-colors" data-filter="web">Desarrollo Web</button>
+            <button class="filter-btn px-4 py-1.5 rounded-full border border-white/10 text-sm font-medium hover:bg-white/5 transition-colors" data-filter="listo">Listos</button>
