@@ -433,3 +433,688 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
 .project-card, .skill-card { transform-style: preserve-3d; will-change: transform; }
 
 .testi-quote { font-family: var(--font-serif); font-size: 1.3rem; line-height: 1.4; color: #F3EFEA; }
+
+
+/* ---------- Galería de proyectos 3D (onda) ---------- */
+:root { --galeria-radio: 28px; }
+
+/* Bloque oscuro con resplandor */
+.galeria-bloque {
+  position: relative;
+  isolation: isolate;
+  width: min(72rem, 100% - 2.5rem);
+  margin: 0 auto;
+  padding: clamp(1.75rem, 4vw, 3.5rem) clamp(1rem, 3vw, 3rem) clamp(2rem, 4vw, 3.5rem);
+  background: #0B0A0C;
+  border: 1px solid rgba(139, 38, 62, .35);
+  border-radius: var(--galeria-radio);
+}
+.galeria-bloque::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(closest-side, rgba(139, 38, 62, .28), rgba(139, 38, 62, .12) 55%, transparent 78%);
+  pointer-events: none;
+}
+.galeria-bloque::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(60% 45% at 50% 0%, rgba(196, 80, 107, .12), transparent 70%);
+  pointer-events: none;
+}
+
+.galeria-titulo {
+  font-family: 'Playfair Display', var(--font-serif), Georgia, serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  text-align: center;
+  letter-spacing: .06em;
+  line-height: 1.05;
+  font-size: clamp(1.75rem, 4.5vw, 3.25rem);
+  color: #F3EFEA;
+  margin: 0 0 2rem;
+}
+
+/* Barra: filtros + interruptor de modo rejilla */
+.galeria-barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+.galeria-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .6rem;
+}
+
+.galeria-modo {
+  display: inline-flex;
+  align-items: center;
+  gap: .7rem;
+  cursor: pointer;
+  user-select: none;
+}
+.galeria-modo-texto {
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #A098A8;
+}
+.galeria-modo-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+.galeria-modo-pista {
+  position: relative;
+  width: 3rem;
+  height: 1.5rem;
+  flex-shrink: 0;
+  background: #161319;
+  border: 1px solid #2b252e;
+  border-radius: 999px;
+  transition: background .2s ease, border-color .2s ease;
+}
+.galeria-modo-boton {
+  position: absolute;
+  top: 50%;
+  left: .2rem;
+  width: 1.1rem;
+  height: 1.1rem;
+  border-radius: 999px;
+  background: #A098A8;
+  transform: translateY(-50%);
+  transition: transform .2s ease, background .2s ease;
+}
+.galeria-modo-input:checked + .galeria-modo-pista {
+  background: var(--vino);
+  border-color: transparent;
+}
+.galeria-modo-input:checked + .galeria-modo-pista .galeria-modo-boton {
+  background: #fff;
+  transform: translate(1.45rem, -50%);
+}
+.galeria-modo-input:focus-visible + .galeria-modo-pista {
+  box-shadow: 0 0 0 3px rgba(139, 38, 62, .35);
+}
+.galeria-modo:hover .galeria-modo-texto { color: #F3EFEA; }
+
+/* Escena 3D: el scroll horizontal es nativo, el navegador gestiona
+   el gesto táctil y la onda la escribe main.js en el transform */
+.galeria-onda {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  gap: 1.1rem;
+  padding: 2.5rem .75rem 3rem;
+  perspective: 1100px;
+  perspective-origin: 50% 45%;
+  transform-style: preserve-3d;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+.galeria-onda::-webkit-scrollbar { height: 6px; }
+.galeria-onda::-webkit-scrollbar-track { background: #161319; border-radius: 999px; }
+.galeria-onda::-webkit-scrollbar-thumb { background: #2b252e; border-radius: 999px; }
+.galeria-onda::-webkit-scrollbar-thumb:hover { background: var(--vino); }
+
+.galeria-tarjeta {
+  flex: 0 0 15.5rem;
+  width: 15.5rem;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1.15rem;
+  transform: translate3d(0, 0, 0);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.galeria-tarjeta-interior {
+  display: flex;
+  flex-direction: column;
+  gap: .9rem;
+  height: 100%;
+  padding: .9rem;
+  background: #161319;
+  border: 1px solid #2b252e;
+  border-radius: 1.15rem;
+  cursor: pointer;
+  text-align: left;
+  opacity: 0;
+  transform: translate3d(0, 34px, 0) scale(.94);
+  transition:
+    opacity .8s ease,
+    transform .95s cubic-bezier(.16, .84, .3, 1),
+    border-color .3s ease,
+    box-shadow .3s ease;
+  transition-delay: calc(var(--i, 0) * 70ms);
+}
+.galeria-tarjeta.es-visible .galeria-tarjeta-interior { opacity: 1; transform: none; }
+.galeria-tarjeta:hover .galeria-tarjeta-interior,
+.galeria-tarjeta:focus-visible .galeria-tarjeta-interior,
+.galeria-tarjeta:focus-within .galeria-tarjeta-interior {
+  outline: none;
+  transform: translate3d(0, -10px, 0) scale(1.035);
+  border-color: var(--vino);
+  box-shadow: 0 22px 48px rgba(0, 0, 0, .55), 0 0 0 1px rgba(139, 38, 62, .55), 0 0 34px rgba(139, 38, 62, .32);
+  transition-delay: 0s;
+}
+.galeria-tarjeta[aria-selected='true'] .galeria-tarjeta-interior {
+  border-color: var(--vino);
+  box-shadow: 0 0 0 2px rgba(139, 38, 62, .55);
+}
+
+.galeria-tarjeta-marco {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: .8rem;
+  overflow: hidden;
+  background: #0B0A0C;
+  border: 1px solid #2b252e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.galeria-tarjeta-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .6s cubic-bezier(.2, .7, .2, 1), filter .4s ease;
+}
+.galeria-tarjeta:hover .galeria-tarjeta-img { transform: scale(1.06); filter: brightness(.6); }
+.galeria-tarjeta-sin-img {
+  font-size: 1.8rem;
+  color: rgba(196, 80, 107, .65);
+}
+
+/* Información extra al pasar el cursor o al enfocar con el teclado */
+.galeria-tarjeta-info {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: .5rem;
+  padding: .8rem;
+  background: linear-gradient(to top, rgba(11, 10, 12, .96) 12%, rgba(11, 10, 12, .82) 55%, rgba(11, 10, 12, .35));
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity .35s ease, transform .5s cubic-bezier(.2, .7, .2, 1);
+  pointer-events: none;
+}
+.galeria-tarjeta:hover .galeria-tarjeta-info,
+.galeria-tarjeta:focus-visible .galeria-tarjeta-info,
+.galeria-tarjeta:focus-within .galeria-tarjeta-info {
+  opacity: 1;
+  transform: none;
+}
+.galeria-tarjeta-resumen {
+  margin: 0;
+  font-size: .74rem;
+  line-height: 1.5;
+  color: #D8D0D8;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 4;
+  line-clamp: 4;
+  overflow: hidden;
+}
+.galeria-distintivos { display: flex; flex-wrap: wrap; gap: .3rem; }
+.galeria-distintivo {
+  font-family: var(--font-mono);
+  font-size: .6rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--vino);
+  border-radius: 999px;
+  padding: .18rem .5rem;
+}
+.galeria-tarjeta-ver {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-family: var(--font-mono);
+  font-size: .6rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #C4506B;
+}
+
+.galeria-tarjeta-cuerpo { display: flex; flex-direction: column; gap: .6rem; }
+.galeria-tarjeta-nombre {
+  font-family: 'Playfair Display', var(--font-serif), Georgia, serif;
+  font-weight: 700;
+  font-size: 1.05rem;
+  line-height: 1.2;
+  color: #fff;
+}
+.galeria-tec-lista { display: flex; flex-wrap: wrap; gap: .35rem; }
+.galeria-tec {
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: #D8D0D8;
+  background: #0B0A0C;
+  border: 1px solid #2b252e;
+  border-radius: 999px;
+  padding: .2rem .5rem;
+  transition: border-color .2s ease, color .2s ease;
+}
+.galeria-tec:hover { border-color: var(--vino); color: #fff; }
+
+/* Pista de desplazamiento, solo si la fila no cabe entera */
+.galeria-pista {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  margin: .25rem 0 0;
+  font-family: var(--font-mono);
+  font-size: .66rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: #6E6674;
+}
+.galeria-pista[hidden] { display: none; }
+.galeria-pista i { color: var(--vino); }
+
+.galeria-vacio {
+  margin: 0 auto;
+  padding: 3.5rem 1rem;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: #6E6674;
+}
+
+/* Modo rejilla (2D): sin onda y sin 3D */
+.galeria-modo-rejilla .galeria-onda {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+  align-items: stretch;
+  gap: 1.25rem;
+  padding: 1.5rem 0 .5rem;
+  perspective: none;
+  transform-style: flat;
+  overflow: visible;
+  overscroll-behavior-x: auto;
+}
+.galeria-modo-rejilla .galeria-tarjeta {
+  transform: none !important;
+  width: auto;
+  will-change: auto;
+}
+.galeria-modo-rejilla .galeria-tarjeta-interior { height: 100%; }
+.galeria-modo-rejilla .galeria-tarjeta:hover .galeria-tarjeta-interior,
+.galeria-modo-rejilla .galeria-tarjeta:focus-visible .galeria-tarjeta-interior {
+  transform: translateY(-6px);
+}
+
+/* Panel de detalles */
+.galeria-detalles {
+  position: relative;
+  margin-top: 1.5rem;
+  padding: 1.75rem;
+  background: #161319;
+  border: 1px solid rgba(139, 38, 62, .45);
+  border-radius: 1.25rem;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, .45);
+}
+.galeria-detalles[hidden] { display: none; }
+.galeria-detalles.hidden { display: none; }
+.galeria-detalles-x {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0B0A0C;
+  border: 1px solid #2b252e;
+  border-radius: .7rem;
+  color: #D8D0D8;
+  cursor: pointer;
+  transition: border-color .2s ease, color .2s ease;
+}
+.galeria-detalles-x:hover { border-color: var(--vino); color: #fff; }
+.galeria-detalles-nombre {
+  font-family: 'Playfair Display', var(--font-serif), Georgia, serif;
+  font-weight: 700;
+  font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+  line-height: 1.15;
+  color: #fff;
+  padding-right: 3rem;
+}
+.galeria-detalles-descripcion {
+  margin: .75rem 0 0;
+  font-size: .9rem;
+  line-height: 1.65;
+  color: #A098A8;
+  max-width: 60ch;
+}
+.galeria-detalles-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .7rem;
+  margin-top: 1.5rem;
+}
+.galeria-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .7rem 1.15rem;
+  border-radius: .75rem;
+  font-size: .82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background .2s ease;
+}
+.galeria-btn-demo {
+  background: var(--vino);
+  border: 1px solid transparent;
+  color: #fff;
+}
+.galeria-btn-demo:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(139, 38, 62, .45); }
+.galeria-btn-codigo {
+  background: #0B0A0C;
+  border: 1px solid #2b252e;
+  color: #F3EFEA;
+}
+.galeria-btn-codigo:hover { transform: translateY(-2px); border-color: var(--vino); color: #fff; }
+.galeria-btn-cerrar {
+  background: transparent;
+  border: 1px solid #2b252e;
+  color: #A098A8;
+}
+.galeria-btn-cerrar:hover { transform: translateY(-2px); border-color: #6E6674; color: #fff; }
+.galeria-btn-vacia { opacity: .38; pointer-events: none; }
+
+@media (max-width: 767px) {
+  .galeria-bloque { padding: 2rem 1rem 2.25rem; }
+  .galeria-barra { justify-content: center; }
+  .galeria-filtros { justify-content: center; }
+  .galeria-onda { padding: 1.5rem .5rem 2rem; }
+  .galeria-tarjeta { flex-basis: 13.5rem; width: 13.5rem; }
+  .galeria-detalles { padding: 1.35rem; }
+  .galeria-detalles-acciones .galeria-btn { flex: 1 1 100%; justify-content: center; }
+  .galeria-tarjeta-resumen { -webkit-line-clamp: 3; line-clamp: 3; }
+}
+
+/* Sin hover no hay información extra: el detalle se abre al tocar */
+@media (hover: none) {
+  .galeria-tarjeta-info { display: none; }
+  .galeria-tarjeta-interior { opacity: 1; transform: none; }
+}
+
+/* Movimiento reducido: la onda queda estática y sin entradas animadas */
+@media (prefers-reduced-motion: reduce) {
+  .galeria-tarjeta-interior {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  .galeria-tarjeta:hover .galeria-tarjeta-interior,
+  .galeria-tarjeta:focus-visible .galeria-tarjeta-interior,
+  .galeria-tarjeta:focus-within .galeria-tarjeta-interior { transform: none !important; }
+  .galeria-tarjeta-info { transition: none !important; }
+  .galeria-tarjeta-img { transform: none !important; }
+}
+
+/* ============================================================
+   FONDO 3D GLOBAL
+   Capa decorativa fija detrás de todo el contenido. No entra en
+   el flujo, no captura eventos y no genera scrollbars. La
+   jerarquía visual es: ondas orgánicas (protagonistas),
+   iluminación, partículas muy tenues y geometría como acento.
+   ============================================================ */
+.background-3d {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  overflow: hidden;
+  background-color: #0B0A0C;
+  /* Iluminación base: brillos vino muy difusos, nunca compiten con el texto */
+  background-image:
+    radial-gradient(58vmax 46vmax at 18% 12%, rgba(139, 38, 62, .15), transparent 68%),
+    radial-gradient(52vmax 44vmax at 86% 78%, rgba(107, 26, 46, .13), transparent 70%),
+    radial-gradient(40vmax 34vmax at 62% 32%, rgba(196, 80, 107, .06), transparent 72%);
+  perspective: 1100px;
+  perspective-origin: 50% 42%;
+}
+
+.background-3d-escena {
+  position: absolute;
+  inset: -16%;
+  transform-style: preserve-3d;
+  /* Inclinación muy leve: solo se percibe como profundidad, no como una página que gira */
+  transform: rotateX(calc(var(--by, 0) * -1deg)) rotateY(calc(var(--bx, 0) * 1.2deg));
+}
+
+.fondo-3d-plano {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+
+/* Cada plano se desplaza un poco más que el anterior: eso es la profundidad */
+.fondo-3d-lejano {
+  transform: translate3d(calc(var(--bx, 0) * -7px), calc(var(--by, 0) * -5px), -330px);
+  filter: blur(9px);
+  opacity: .85;
+}
+.fondo-3d-medio {
+  transform: translate3d(calc(var(--bx, 0) * -16px), calc(var(--by, 0) * -11px), -140px);
+}
+.fondo-3d-cercano {
+  transform: translate3d(calc(var(--bx, 0) * -30px), calc(var(--by, 0) * -20px), -40px);
+}
+
+/* ---- Ondas orgánicas: el elemento protagonista del fondo ---- */
+.seda,
+.seda-lejana {
+  position: absolute;
+  border-radius: 50%;
+}
+.seda {
+  will-change: transform;
+}
+.seda-a {
+  width: 92vmax;
+  height: 58vmax;
+  left: -26vmax;
+  top: -20vmax;
+  background: radial-gradient(closest-side, rgba(139, 38, 62, .26), rgba(112, 24, 44, .14) 46%, transparent 74%);
+  animation: seda-deriva-a 38s ease-in-out infinite;
+}
+.seda-b {
+  width: 78vmax;
+  height: 64vmax;
+  right: -28vmax;
+  bottom: -26vmax;
+  background: radial-gradient(closest-side, rgba(196, 80, 107, .15), rgba(139, 38, 62, .09) 44%, transparent 72%);
+  animation: seda-deriva-b 46s ease-in-out infinite;
+}
+.seda-c {
+  width: 54vmax;
+  height: 40vmax;
+  left: 26vmax;
+  top: 34vmax;
+  background: radial-gradient(closest-side, rgba(196, 80, 107, .1), transparent 70%);
+  animation: seda-deriva-c 30s ease-in-out infinite;
+}
+
+@keyframes seda-deriva-a {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  50%  { transform: translate3d(4vmax, 2.5vmax, 0) rotate(9deg) scale(1.07); }
+  100% { transform: translate3d(-1.5vmax, 3.5vmax, 0) rotate(-5deg) scale(1.03); }
+}
+@keyframes seda-deriva-b {
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1.04); }
+  50%  { transform: translate3d(-3.5vmax, -2vmax, 0) rotate(-8deg) scale(1); }
+  100% { transform: translate3d(1.5vmax, -3vmax, 0) rotate(6deg) scale(1.08); }
+}
+@keyframes seda-deriva-c {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  50%  { transform: translate3d(2.5vmax, -3vmax, 0) scale(1.12); }
+  100% { transform: translate3d(-2vmax, 1.5vmax, 0) scale(1); }
+}
+
+/* ---- Campo lejano: desenfocado y estático, solo se mueve con el cursor ---- */
+.seda-lejana-a {
+  width: 120vmax;
+  height: 80vmax;
+  left: -34vmax;
+  top: -24vmax;
+  background: radial-gradient(closest-side, rgba(139, 38, 62, .3), rgba(96, 20, 38, .16) 40%, transparent 70%);
+}
+.seda-lejana-b {
+  width: 96vmax;
+  height: 70vmax;
+  right: -30vmax;
+  bottom: -30vmax;
+  background: radial-gradient(closest-side, rgba(196, 80, 107, .16), transparent 68%);
+}
+
+/* ---- Geometría: acento discreto ---- */
+.geo {
+  position: absolute;
+}
+.geo-rejilla {
+  inset: -10%;
+  background-image:
+    linear-gradient(to right, rgba(139, 38, 62, .055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(139, 38, 62, .055) 1px, transparent 1px);
+  background-size: 9vmax 9vmax;
+  -webkit-mask-image: radial-gradient(70% 60% at 50% 45%, #000 20%, transparent 78%);
+  mask-image: radial-gradient(70% 60% at 50% 45%, #000 20%, transparent 78%);
+  animation: geo-deriva 90s ease-in-out infinite;
+}
+.geo-anillo {
+  width: 52vmax;
+  height: 52vmax;
+  left: -14vmax;
+  top: 8vmax;
+  border: 1px solid rgba(139, 38, 62, .2);
+  border-radius: 50%;
+  border-left-color: transparent;
+  animation: geo-giro 120s linear infinite;
+}
+.geo-anillo-b {
+  width: 34vmax;
+  height: 34vmax;
+  right: -8vmax;
+  bottom: 4vmax;
+  border: 1px solid rgba(196, 80, 107, .14);
+  border-radius: 50%;
+  border-bottom-color: transparent;
+  animation: geo-giro 90s linear infinite reverse;
+}
+.geo-arco {
+  width: 26vmax;
+  height: 26vmax;
+  right: 18vmax;
+  top: -8vmax;
+  border: 1px solid rgba(196, 80, 107, .12);
+  border-radius: 50%;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  animation: geo-deriva 70s ease-in-out infinite;
+}
+.geo-barra {
+  width: 46vmax;
+  height: 1px;
+  left: -6vmax;
+  top: 62%;
+  background: linear-gradient(to right, transparent, rgba(196, 80, 107, .16), transparent);
+  animation: geo-deriva 80s ease-in-out infinite;
+}
+.geo-barra-b {
+  width: 34vmax;
+  height: 1px;
+  right: -4vmax;
+  top: 28%;
+  background: linear-gradient(to right, transparent, rgba(139, 38, 62, .22), transparent);
+  animation: geo-deriva 64s ease-in-out infinite reverse;
+}
+@keyframes geo-giro {
+  to { transform: rotate(360deg); }
+}
+@keyframes geo-deriva {
+  0%   { transform: translate3d(0, 0, 0); }
+  50%  { transform: translate3d(2.4vmax, -1.8vmax, 0); }
+  100% { transform: translate3d(-1.2vmax, 2.2vmax, 0); }
+}
+
+/* ---- Partículas: solo canvas, muy tenues ---- */
+.fondo-3d-particulas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  opacity: .8;
+  transform: translate3d(calc(var(--bx, 0) * -8px), calc(var(--by, 0) * -6px), 0);
+}
+
+/* ---- Viñeta: protege el contraste en los bordes ---- */
+.fondo-3d-vineta {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(128% 96% at 50% 40%, transparent 34%, rgba(11, 10, 12, .5) 74%, rgba(11, 10, 12, .86) 100%);
+}
+
+/* ---- Tablet: menos profundidad y menos capas ---- */
+@media (max-width: 1024px) {
+  .background-3d { perspective: 900px; }
+  .fondo-3d-lejano { filter: blur(7px); opacity: .8; }
+  .seda-a { width: 84vmax; height: 54vmax; }
+  .seda-b { width: 72vmax; height: 58vmax; }
+  .seda-c { width: 48vmax; height: 36vmax; }
+  .geo-anillo { width: 46vmax; height: 46vmax; }
+}
+
+/* ---- Móvil: versión ligera, sin parallax ni desenfoque pesado ---- */
+@media (max-width: 640px) {
+  .background-3d { perspective: 760px; }
+  .background-3d-escena { transform: none; }
+  .fondo-3d-lejano { filter: none; opacity: .7; }
+  .seda { will-change: auto; }
+  .seda-a { width: 100vmax; height: 66vmax; }
+  .seda-b { width: 86vmax; height: 70vmax; }
+  .seda-c { display: none; }
+  .geo-rejilla { display: none; }
+  .geo-anillo-b,
+  .geo-arco { display: none; }
+  .geo-barra { top: 68%; }
+  .fondo-3d-particulas { opacity: .7; transform: none; }
+}
+
+/* ---- Movimiento reducido: el fondo queda completamente estático ---- */
+@media (prefers-reduced-motion: reduce) {
+  .background-3d-escena,
+  .seda,
+  .geo,
+  .fondo-3d-particulas { animation: none !important; transition: none !important; }
+  .background-3d-escena,
+  .fondo-3d-particulas { transform: none !important; }
+}

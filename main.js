@@ -5,6 +5,14 @@
 (function () {
   'use strict';
 
+  /* Escape de texto antes de inyectarlo en innerHTML */
+  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
+
+  /* Preferencias de movimiento, compartidas por el hero y la galería */
+  const MQ_MOVIMIENTO = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const MQ_PUNTERO_FINO = window.matchMedia('(hover: hover) and (pointer: fine)');
+  const puedeMover = () => MQ_PUNTERO_FINO.matches && !MQ_MOVIMIENTO.matches;
+
   /* --------------------------------------------------------
      1. MENÚ MÓVIL
   -------------------------------------------------------- */
@@ -34,9 +42,9 @@
   -------------------------------------------------------- */
   const fallbackProjects = [
     {
+      id: 'fallback-sharehub',
       titulo: 'ShareHub',
       estado: 'listo',
-      categorias: ['web', 'fullstack'],
       descripcion:
         'Plataforma colaborativa basada en la economía circular que permite compartir u optimizar el uso de activos ociosos para reducir el desperdicio.',
       stack: ['JavaScript', 'Node.js', 'HTML/CSS', 'Base de Datos'],
@@ -45,9 +53,9 @@
       imagen: '',
     },
     {
+      id: 'fallback-virtual-menu',
       titulo: 'Virtual Menu',
       estado: 'listo',
-      categorias: ['web', 'frontend'],
       descripcion:
         'Carta digital e interactiva para restaurantes, diseñada para optimizar la experiencia de navegación del cliente desde dispositivos móviles.',
       stack: ['HTML5', 'CSS3', 'JavaScript', 'UI/UX Design'],
@@ -56,9 +64,9 @@
       imagen: '',
     },
     {
+      id: 'fallback-automatizacion',
       titulo: 'Sistema de Automatización & API',
       estado: 'desarrollo',
-      categorias: ['backend'],
       descripcion:
         'API REST para la gestión de datos internos, optimización de consultas y automatización de procesos en tiempo real.',
       stack: ['Python', 'PostgreSQL', 'REST API', 'Git'],
@@ -71,76 +79,442 @@
   let projects = fallbackProjects.slice();
 
   /* --------------------------------------------------------
-     3. RENDER DE PROYECTOS + FILTROS
+     3. GALERÍA DE PROYECTOS
+        La BD no guarda categorías, así que se deducen del
+        texto del proyecto (tecnologías, título y descripción).
   -------------------------------------------------------- */
-  const grid = document.getElementById('projects-grid');
-  const filterBtns = document.querySelectorAll('.filter-btn');
+  const REGLAS_CATEGORIAS = [
+    { id: 'webgl', etiqueta: 'WebGL', claves: ['three', 'threejs', 'webgl', 'babylon', 'shader', 'glsl', 'pixi'] },
+    {
+      id: 'fullstack',
+      etiqueta: 'Full-stack',
+      claves: ['node', 'express', 'supabase', 'nestjs', 'nextjs', 'next.js', 'react', 'vue', 'angular', 'svelte', 'php', 'cakephp', 'laravel', 'django', 'flask', 'spring boot', '.net', 'dotnet', 'firebase', 'graphql'],
+    },
+    {
+      id: 'sistemas',
+      etiqueta: 'Sistemas',
+      claves: ['linux', 'kernel', 'unix', 'ubuntu', 'debian', 'bash', 'shell', 'ensamblador', 'assembly', 'docker'],
+    },
+    {
+      id: 'ecologicos',
+      etiqueta: 'Ecológicos',
+      claves: ['ecologic', 'economia circular', 'sostenib', 'reciclaj', 'reciclar', 'ambiental', 'climatic', 'residuos', 'desperdicio', 'renovable', 'circular'],
+    },
+  ];
 
-  function statusInfo(estado) {
-    if (estado === 'listo') {
-      return { text: '🟢 Listo', cls: 'status-ready' };
-    }
-    return { text: '🟡 En Desarrollo', cls: 'status-dev' };
+  /* Minúsculas y sin acentos, para comparar sin sorpresas */
+  function normalizar(s) {
+    return String(s == null ? '' : s)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
   }
 
-  function projectCard(p, i) {
-    const status = statusInfo(p.estado);
-    const techBadges = p.stack
-      .map((t) => `<span class="tech-badge">${t}</span>`)
+  function deducirCategorias(p) {
+    const texto = normalizar([...(p.stack || []), p.titulo, p.descripcion].join(' '));
+    return REGLAS_CATEGORIAS.filter((regla) => regla.claves.some((clave) => texto.includes(clave))).map(
+      (regla) => regla.id
+    );
+  }
+
+  const contenedorTarjetas = document.getElementById('galeria-tarjetas');
+  const filtroBtns = document.querySelectorAll('.galeria-filtros .filter-btn');
+  const panelDetalles = document.getElementById('galeria-detalles');
+  const interruptorRejilla = document.getElementById('galeria-modo-rejilla');
+  const bloqueGaleria = document.querySelector('.galeria-bloque');
+  const pistaGaleria = document.getElementById('galeria-pista');
+
+  function tarjetaGaleria(p) {
+    const categorias = deducirCategorias(p);
+    const imagen = p.imagen
+      ? `<img src="${esc(p.imagen)}" alt="Captura de ${esc(p.titulo)}" class="galeria-tarjeta-img" loading="lazy" onerror="this.style.display='none'" />`
+      : `<i class="fa-solid fa-diagram-project galeria-tarjeta-sin-img" aria-hidden="true"></i>`;
+    const etiquetas = (p.stack || [])
+      .map((t) => `<span class="galeria-tec">${esc(t)}</span>`)
       .join('');
-    const img = p.imagen
-      ? `<img src="${p.imagen}" alt="${p.titulo}" class="project-img" loading="lazy" onerror="this.style.display='none'" />`
-      : '';
-    const demo = p.demo
-      ? `<a href="${p.demo}" target="_blank" rel="noopener" class="demo-link">
-            <i class="fa-solid fa-arrow-up-right-from-square"></i> Demo en Vivo
-          </a>`
-      : '';
-    const codigo = p.codigo
-      ? `<a href="${p.codigo}" target="_blank" rel="noopener" class="code-link">
-            <i class="fa-brands fa-github"></i> Código
-          </a>`
-      : '';
+    const distintivos = categorias
+      .map((id) => {
+        const regla = REGLAS_CATEGORIAS.find((r) => r.id === id);
+        return regla ? `<span class="galeria-distintivo">${esc(regla.etiqueta)}</span>` : '';
+      })
+      .join('');
 
     return `
-      <article class="project-card show" data-categorias="${p.categorias.join(',')}" data-estado="${p.estado}">
-        <span class="project-num">${String(i + 1).padStart(2, '0')}</span>
-        ${img}
-        <span class="status-badge ${status.cls}">${status.text}</span>
-        <h3 class="project-title">${p.titulo}</h3>
-        <p class="project-desc">${p.descripcion}</p>
-        ${techBadges ? `<div class="flex flex-wrap gap-2">${techBadges}</div>` : ''}
-        <div class="project-links">${demo}${codigo}</div>
+      <article class="galeria-tarjeta" role="button" tabindex="0"
+        data-indice="${p.indice}"
+        data-categorias="${esc(categorias.join(','))}"
+        data-estado="${esc(p.estado)}"
+        aria-label="Ver detalles de ${esc(p.titulo)}">
+        <div class="galeria-tarjeta-interior">
+          <div class="galeria-tarjeta-marco">
+            ${imagen}
+            <div class="galeria-tarjeta-info" aria-hidden="true">
+              <p class="galeria-tarjeta-resumen">${esc(p.descripcion || 'Sin descripción disponible.')}</p>
+              ${distintivos ? `<div class="galeria-distintivos">${distintivos}</div>` : ''}
+              <span class="galeria-tarjeta-ver"><i class="fa-solid fa-arrow-right"></i> Ver detalles</span>
+            </div>
+          </div>
+          <div class="galeria-tarjeta-cuerpo">
+            <h3 class="galeria-tarjeta-nombre">${esc(p.titulo)}</h3>
+            ${etiquetas ? `<div class="galeria-tec-lista">${etiquetas}</div>` : ''}
+          </div>
+        </div>
       </article>
     `;
   }
 
-  function renderProjects(list) {
-    grid.innerHTML = list.map(projectCard).join('');
+  function renderProyectos(lista) {
+    if (!contenedorTarjetas) return;
+    contenedorTarjetas.innerHTML = lista.length
+      ? lista.map(tarjetaGaleria).join('')
+      : `<p class="galeria-vacio">No hay proyectos en esta categoría todavía</p>`;
+    prepararEscena();
   }
 
-  function matchesFilter(p, filter) {
-    if (filter === 'todos') return true;
-    if (filter === 'listo') return p.estado === 'listo';
-    if (filter === 'desarrollo') return p.estado === 'desarrollo';
-    if (filter === 'web') return p.categorias.includes('web');
-    return true;
+  function coincideFiltro(p, filtro) {
+    if (filtro === 'todos') return true;
+    return deducirCategorias(p).includes(filtro);
   }
 
-  function applyFilter(filter) {
-    filterBtns.forEach((btn) => {
-      btn.classList.toggle('active', btn.dataset.filter === filter);
+  function aplicarFiltro(filtro) {
+    filtroBtns.forEach((btn) => {
+      btn.classList.toggle('active', btn.dataset.filter === filtro);
     });
-    const visible = projects.filter((p) => matchesFilter(p, filter));
-    renderProjects(visible);
+    renderProyectos(projects.filter((p) => coincideFiltro(p, filtro)));
   }
 
-  filterBtns.forEach((btn) => {
-    btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+  filtroBtns.forEach((btn) => {
+    btn.addEventListener('click', () => aplicarFiltro(btn.dataset.filter));
   });
 
+  /* Panel de detalles */
+  function abrirDetalles(indice) {
+    const proyecto = projects[indice];
+    if (!panelDetalles || !proyecto) return;
+    const btnDemo = document.getElementById('galeria-btn-demo');
+    const btnCodigo = document.getElementById('galeria-btn-codigo');
+
+    document.getElementById('galeria-detalles-nombre').textContent = proyecto.titulo;
+    document.getElementById('galeria-detalles-descripcion').textContent =
+      proyecto.descripcion || 'Sin descripción disponible.';
+
+    if (btnDemo) {
+      const hayDemo = Boolean(proyecto.demo);
+      btnDemo.href = hayDemo ? proyecto.demo : '#';
+      btnDemo.classList.toggle('galeria-btn-vacia', !hayDemo);
+      btnDemo.setAttribute('aria-disabled', String(!hayDemo));
+      btnDemo.setAttribute('tabindex', hayDemo ? '0' : '-1');
+    }
+    if (btnCodigo) {
+      const hayCodigo = Boolean(proyecto.codigo);
+      btnCodigo.href = hayCodigo ? proyecto.codigo : '#';
+      btnCodigo.classList.toggle('galeria-btn-vacia', !hayCodigo);
+      btnCodigo.setAttribute('aria-disabled', String(!hayCodigo));
+      btnCodigo.setAttribute('tabindex', hayCodigo ? '0' : '-1');
+    }
+
+    contenedorTarjetas.querySelectorAll('.galeria-tarjeta').forEach((card) => {
+      card.setAttribute('aria-selected', String(Number(card.dataset.indice) === indice));
+    });
+
+    panelDetalles.classList.remove('hidden');
+  }
+
+  function cerrarDetalles() {
+    if (panelDetalles) panelDetalles.classList.add('hidden');
+    if (contenedorTarjetas) {
+      contenedorTarjetas.querySelectorAll('.galeria-tarjeta').forEach((card) => card.removeAttribute('aria-selected'));
+    }
+  }
+
+  if (contenedorTarjetas) {
+    contenedorTarjetas.addEventListener('click', (e) => {
+      const card = e.target.closest('.galeria-tarjeta');
+      if (card) abrirDetalles(Number(card.dataset.indice));
+    });
+    contenedorTarjetas.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+      const card = e.target.closest('.galeria-tarjeta');
+      if (!card) return;
+      e.preventDefault();
+      abrirDetalles(Number(card.dataset.indice));
+    });
+  }
+
+  const btnCerrar = document.getElementById('galeria-btn-cerrar');
+  if (btnCerrar) btnCerrar.addEventListener('click', cerrarDetalles);
+  const btnCerrarX = document.getElementById('galeria-detalles-cerrar-x');
+  if (btnCerrarX) btnCerrarX.addEventListener('click', cerrarDetalles);
+
+  if (interruptorRejilla && bloqueGaleria) {
+    interruptorRejilla.addEventListener('change', () => {
+      bloqueGaleria.classList.toggle('galeria-modo-rejilla', interruptorRejilla.checked);
+      prepararEscena();
+    });
+  }
+
+  /* --------------------------------------------------------
+     3b. EFECTO ONDA 3D DE LA GALERÍA
+         Curva senoidal resuelta con transformaciones CSS 3D y
+         un único requestAnimationFrame. El bucle se apaga
+         cuando la galería no está a la vista, en modo rejilla
+         o si el sistema pide movimiento reducido.
+  -------------------------------------------------------- */
+  const enModoRejilla = () => Boolean(interruptorRejilla && interruptorRejilla.checked);
+  const hayOnda = () => tarjetasOnda.length > 1;
+  const animacionActiva = () => puedeMover() && !enModoRejilla() && hayOnda();
+
+  let tarjetasOnda = [];
+  let pasoX = 260;
+  let ajustes = { amplitud: 54, profundidad: 132, inclinacion: 15, porOnda: 3.4, deriva: 0.11, alcance: 260 };
+  let fotograma = 0;
+  let fase = 0;
+  let instantePrevio = 0;
+  let escenaVisible = false;
+  let puntero = { x: 0, y: 0, activo: false };
+  let giro = { x: 0, y: 0 };
+  let giroObjetivo = { x: 0, y: 0 };
+  let indiceResaltado = -1;
+  let temporizadorMedicion = 0;
+
+  /* Menos amplitud, profundidad y deriva en pantallas pequeñas */
+  function parametrosOnda() {
+    const ancho = window.innerWidth;
+    const movil = ancho <= 640;
+    const tablet = ancho <= 1024;
+    return {
+      amplitud: movil ? 18 : tablet ? 36 : 54,
+      profundidad: movil ? 30 : tablet ? 84 : 132,
+      inclinacion: movil ? 6 : tablet ? 10 : 15,
+      porOnda: movil ? 2.4 : tablet ? 3 : 3.4,
+      deriva: movil ? 0.05 : 0.1,
+      alcance: movil ? 150 : 260,
+    };
+  }
+
+  /* Posición de cada tarjeta respecto al centro visible */
+  function medirPosiciones() {
+    if (!contenedorTarjetas || !tarjetasOnda.length) return;
+    const centro = contenedorTarjetas.scrollLeft + contenedorTarjetas.clientWidth / 2;
+    tarjetasOnda.forEach((t) => {
+      t.u = (t.izq + t.ancho / 2 - centro) / pasoX;
+    });
+  }
+
+  function alDesplazarGaleria() {
+    medirPosiciones();
+    if (animacionActiva()) pintarEscena();
+  }
+
+  /* Una sola pasada de estilos por frame: lee el bloque, escribe tarjetas */
+  function pintarEscena() {
+    if (!contenedorTarjetas || !tarjetasOnda.length) return;
+    const rect = bloqueGaleria ? bloqueGaleria.getBoundingClientRect() : null;
+    /* El puntero solo inclina la escena si el sistema lo permite: con
+       movimiento reducido o en puntero grueso la onda queda totalmente fija. */
+    const interactivo = puntero.activo && puedeMover();
+
+    if (rect && rect.height && interactivo) {
+      giroObjetivo.x = ((puntero.x - rect.left) / rect.width - 0.5) * 2;
+      giroObjetivo.y = ((puntero.y - rect.top) / rect.height - 0.5) * 2;
+    } else {
+      giroObjetivo.x = 0;
+      giroObjetivo.y = 0;
+    }
+    giro.x += (giroObjetivo.x - giro.x) * 0.07;
+    giro.y += (giroObjetivo.y - giro.y) * 0.07;
+
+    const punteroFila = rect && interactivo ? puntero.x - rect.left + contenedorTarjetas.scrollLeft : 0;
+    const porRadian = (Math.PI * 2) / ajustes.porOnda;
+
+    tarjetasOnda.forEach((t) => {
+      const angulo = t.u * porRadian + fase;
+      const seno = Math.sin(angulo);
+      const coseno = Math.cos(angulo);
+      const distancia = Math.abs(t.izq + t.ancho / 2 - punteroFila);
+      const contacto = interactivo ? Math.max(0, 1 - distancia / ajustes.alcance) : 0;
+      const propio = t.i === indiceResaltado ? 1 : 0;
+
+      const y = ajustes.amplitud * seno + giro.y * 11 * (0.3 + 0.7 * contacto) - propio * 6;
+      const z = ajustes.profundidad * coseno + contacto * 30 + propio * 34;
+      const giroY = -ajustes.inclinacion * seno + giro.x * 8;
+      const giroX = coseno * ajustes.inclinacion * 0.3 - giro.y * 5;
+      const escala = 1 + contacto * 0.04 + propio * 0.02;
+
+      t.el.style.transform =
+        'translate3d(0,' + y.toFixed(2) + 'px,' + z.toFixed(1) + 'px)' +
+        ' rotateX(' + giroX.toFixed(2) + 'deg) rotateY(' + giroY.toFixed(2) + 'deg)' +
+        ' scale(' + escala.toFixed(3) + ')';
+    });
+  }
+
+  function bucleOnda(instante) {
+    fotograma = requestAnimationFrame(bucleOnda);
+    if (!instantePrevio) instantePrevio = instante;
+    const delta = Math.min(64, instante - instantePrevio);
+    instantePrevio = instante;
+    if (!document.hidden) fase = (fase + (delta / 1000) * ajustes.deriva) % (Math.PI * 2);
+    pintarEscena();
+  }
+
+  function iniciarOnda() {
+    if (fotograma || !animacionActiva() || !escenaVisible) return;
+    instantePrevio = 0;
+    fotograma = requestAnimationFrame(bucleOnda);
+  }
+
+  function detenerOnda() {
+    if (!fotograma) return;
+    cancelAnimationFrame(fotograma);
+    fotograma = 0;
+    instantePrevio = 0;
+  }
+
+  /* Entrada escalonada al llegar a la vista */
+  let observadorEntrada = null;
+  if (window.IntersectionObserver) {
+    observadorEntrada = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((entrada) => {
+          if (entrada.isIntersecting) entrada.target.classList.add('es-visible');
+        });
+      },
+      { threshold: 0.15, rootMargin: '0px 0px -6% 0px' }
+    );
+  }
+
+  function observarEntrada() {
+    if (!observadorEntrada || MQ_MOVIMIENTO.matches) {
+      tarjetasOnda.forEach((t) => t.el.classList.add('es-visible'));
+      return;
+    }
+    observadorEntrada.disconnect();
+    tarjetasOnda.forEach((t) => {
+      t.el.classList.remove('es-visible');
+      observadorEntrada.observe(t.el);
+    });
+  }
+
+  /* Recalcula geometría, onda y estado del bucle */
+  function prepararEscena() {
+    if (!contenedorTarjetas) return;
+
+    tarjetasOnda = Array.from(contenedorTarjetas.querySelectorAll('.galeria-tarjeta')).map((el, i) => ({
+      el,
+      i,
+      u: 0,
+      izq: 0,
+      ancho: 0,
+    }));
+    ajustes = parametrosOnda();
+
+    if (!tarjetasOnda.length) {
+      detenerOnda();
+      return;
+    }
+
+    tarjetasOnda.forEach((t) => {
+      t.el.style.setProperty('--i', t.i);
+      t.izq = t.el.offsetLeft;
+      t.ancho = t.el.offsetWidth;
+    });
+    pasoX = hayOnda()
+      ? Math.max(1, tarjetasOnda[1].el.offsetLeft - tarjetasOnda[0].el.offsetLeft)
+      : tarjetasOnda[0].el.offsetWidth + 16;
+
+    /* La onda no debe recortar tarjetas: el relleno vertical sigue la amplitud */
+    if (enModoRejilla()) {
+      contenedorTarjetas.style.paddingTop = '';
+      contenedorTarjetas.style.paddingBottom = '';
+      tarjetasOnda.forEach((t) => {
+        t.el.style.transform = '';
+      });
+    } else {
+      contenedorTarjetas.style.paddingTop = Math.round(ajustes.amplitud + 38) + 'px';
+      contenedorTarjetas.style.paddingBottom = Math.round(ajustes.amplitud + 38) + 'px';
+    }
+
+    if (pistaGaleria) {
+      pistaGaleria.hidden = enModoRejilla() || contenedorTarjetas.scrollWidth <= contenedorTarjetas.clientWidth + 4;
+    }
+
+    medirPosiciones();
+    observarEntrada();
+    if (!enModoRejilla()) pintarEscena();
+
+    if (escenaVisible && animacionActiva()) iniciarOnda();
+    else detenerOnda();
+  }
+
+  /* Pausa el bucle cuando la galería sale de la pantalla */
+  if (bloqueGaleria && window.IntersectionObserver) {
+    new IntersectionObserver(
+      (entradas) => {
+        escenaVisible = entradas.some((e) => e.isIntersecting);
+        if (escenaVisible) iniciarOnda();
+        else detenerOnda();
+      },
+      { threshold: 0 }
+    ).observe(bloqueGaleria);
+  }
+
+  /* Cursor: inclina la escena y acerca la tarjeta más cercana */
+  if (bloqueGaleria) {
+    bloqueGaleria.addEventListener(
+      'pointermove',
+      (e) => {
+        /* Sin hover real (táctil) o con movimiento reducido el puntero
+           no debe mover la escena ni dejar una tarjeta resaltada. */
+        if (!puedeMover()) {
+          puntero.activo = false;
+          indiceResaltado = -1;
+          return;
+        }
+        puntero.x = e.clientX;
+        puntero.y = e.clientY;
+        puntero.activo = true;
+        const tarjeta = e.target.closest ? e.target.closest('.galeria-tarjeta') : null;
+        indiceResaltado = tarjeta ? tarjetasOnda.findIndex((t) => t.el === tarjeta) : -1;
+      },
+      { passive: true }
+    );
+    bloqueGaleria.addEventListener('pointerleave', () => {
+      puntero.activo = false;
+      indiceResaltado = -1;
+    });
+  }
+
+  if (contenedorTarjetas) {
+    contenedorTarjetas.addEventListener('scroll', alDesplazarGaleria, { passive: true });
+  }
+
+  window.addEventListener(
+    'resize',
+    () => {
+      clearTimeout(temporizadorMedicion);
+      temporizadorMedicion = setTimeout(prepararEscena, 120);
+    },
+    { passive: true }
+  );
+
+  if (typeof MQ_MOVIMIENTO.addEventListener === 'function') {
+    MQ_MOVIMIENTO.addEventListener('change', prepararEscena);
+  }
+
+  if (document.fonts && document.fonts.ready && typeof document.fonts.ready.then === 'function') {
+    document.fonts.ready.then(prepararEscena).catch(() => {});
+  }
+
+  /* El índice referencia la posición dentro de `projects`, no la de la lista filtrada */
+  function marcarIndices() {
+    projects.forEach((p, i) => {
+      p.indice = i;
+    });
+  }
+
   /* Render inicial (respaldo estático) */
-  renderProjects(projects);
+  marcarIndices();
+  renderProyectos(projects);
 
   /* Carga real de proyectos desde Supabase */
   async function cargarProyectosDesdeBD() {
@@ -155,7 +529,6 @@
       projects = data.map((p) => ({
         titulo: p.titulo || 'Sin título',
         estado: p.progreso != null && p.progreso >= 100 ? 'listo' : 'desarrollo',
-        categorias: ['web', 'fullstack'],
         descripcion: p.descripcion || '',
         stack: (p.tecnologias || '')
           .split(',')
@@ -166,9 +539,9 @@
         imagen: p.imagen_url || '',
       }));
 
-      renderProjects(projects);
-      const active = document.querySelector('.filter-btn.active');
-      if (active) applyFilter(active.dataset.filter);
+      marcarIndices();
+      const activa = document.querySelector('.galeria-filtros .filter-btn.active');
+      aplicarFiltro(activa ? activa.dataset.filter : 'todos');
     } catch (e) {
       /* Mantiene el respaldo estático si la BD falla */
     }
@@ -389,10 +762,7 @@
   /* --------------------------------------------------------
      10. EFECTO 3D: parallax del hero e inclinación de tarjetas
   -------------------------------------------------------- */
-  const puedeMover = window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
-    !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (puedeMover) {
+  if (puedeMover()) {
     const hero = document.getElementById('inicio');
     if (hero) {
       hero.addEventListener('mousemove', (e) => {
@@ -428,8 +798,6 @@
      11. CERTIFICACIONES Y TESTIMONIOS desde Supabase
          (la sección solo aparece si hay datos)
   -------------------------------------------------------- */
-  const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-
   async function cargarCertificacionesYTestimonios() {
     if (!window._supabase) return;
     try {
@@ -454,4 +822,283 @@
     }
   }
   cargarCertificacionesYTestimonios();
+
+  /* --------------------------------------------------------
+     12. FONDO 3D (capa decorativa)
+         Las ondas orgánicas, la iluminación y la geometría son
+         planos CSS 3D animados por el compositor; el canvas solo
+         dibuja las partículas. Un único requestAnimationFrame, sin
+         lecturas de layout dentro del bucle, y apagado por completo
+         con prefers-reduced-motion o con la pestaña en segundo plano.
+         Es independiente de la galería: no comparte estado ni bucle.
+  -------------------------------------------------------- */
+  /* --------------------------------------------------------
+     Estado compartido del puntero.
+     El fondo 3D ya lo calcula en apuntar(); es la única fuente de
+     puntero y no hace falta un segundo listener de pointermove. No
+     altera el comportamiento del fondo.
+  -------------------------------------------------------- */
+  const punteroEscena = { x: 0, y: 0 };
+
+  /* --------------------------------------------------------
+     Reloj de escena: un ÚNICO requestAnimationFrame para el fondo
+     3D. Cada capa se suscribe con su propio callback y
+     recibe los segundos transcurridos desde el fotograma anterior.
+
+     El cálculo del delta es el mismo que usaba el fondo antes del
+     refactor: tope de 64 ms por fotograma, y el instante previo se
+     reinicia en cada arranque. Cambia únicamente quién pide el
+     fotograma, no qué se hace con él.
+  -------------------------------------------------------- */
+  const relojEscena = (function () {
+    const suscriptores = [];
+    let fotograma = 0;
+    let instantePrevio = 0;
+
+    function bucle(instante) {
+      fotograma = requestAnimationFrame(bucle);
+      const delta = Math.min(64, instante - (instantePrevio || instante));
+      instantePrevio = instante;
+      const segundos = delta / 1000;
+      for (let i = 0; i < suscriptores.length; i++) suscriptores[i](segundos);
+    }
+
+    return {
+      suscribir: function (fn) { suscriptores.push(fn); },
+      activo: function () { return !!fotograma; },
+      arrancar: function () {
+        if (fotograma) return;
+        instantePrevio = 0;
+        fotograma = requestAnimationFrame(bucle);
+      },
+      parar: function () {
+        if (!fotograma) return;
+        cancelAnimationFrame(fotograma);
+        fotograma = 0;
+      },
+    };
+  })();
+
+  /* --------------------------------------------------------
+     FONDO 3D GLOBAL
+  -------------------------------------------------------- */
+  function iniciarFondo3D() {
+    const capa = document.querySelector('.background-3d');
+    const canvas = capa && capa.querySelector('.fondo-3d-particulas');
+    if (!capa || !canvas || typeof canvas.getContext !== 'function') return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const MQ_ESCRITORIO = window.matchMedia('(min-width: 1025px)');
+    const MQ_TABLET = window.matchMedia('(min-width: 641px) and (max-width: 1024px)');
+    const MQ_MOVIL = window.matchMedia('(max-width: 640px)');
+
+    /* Menos partículas y menos resolución en pantallas pequeñas */
+    const PERFILES = {
+      escritorio: { particulas: 54, dpr: 2 },
+      tablet: { particulas: 30, dpr: 1.75 },
+      movil: { particulas: 18, dpr: 1.5 },
+    };
+    const nombrePerfil = () => (MQ_MOVIL.matches ? 'movil' : MQ_TABLET.matches ? 'tablet' : 'escritorio');
+
+    /* Puntos de luz precargados: el bucle nunca crea gradientes */
+    const sprites = [[255, 226, 232], [255, 198, 208], [196, 80, 107]].map((canal) => {
+      const soporte = document.createElement('canvas');
+      soporte.width = 24;
+      soporte.height = 24;
+      const c = soporte.getContext('2d');
+      const grad = c.createRadialGradient(12, 12, 0, 12, 12, 12);
+      grad.addColorStop(0, 'rgba(' + canal[0] + ',' + canal[1] + ',' + canal[2] + ',1)');
+      grad.addColorStop(0.4, 'rgba(' + canal[0] + ',' + canal[1] + ',' + canal[2] + ',0.42)');
+      grad.addColorStop(1, 'rgba(' + canal[0] + ',' + canal[1] + ',' + canal[2] + ',0)');
+      c.fillStyle = grad;
+      c.fillRect(0, 0, 24, 24);
+      return soporte;
+    });
+
+    let particulas = [];
+    let ancho = 0;
+    let alto = 0;
+    let vw = window.innerWidth;
+    let vh = window.innerHeight;
+    let tiempo = 0;
+    let bx = 0;
+    let by = 0;
+    let objetivoBx = 0;
+    let objetivoBy = 0;
+    let ultimoBx = '';
+    let ultimoBy = '';
+    let temporizadorMedida = 0;
+
+    function crearParticulas() {
+      const perfil = PERFILES[nombrePerfil()];
+      particulas = [];
+      for (let i = 0; i < perfil.particulas; i++) {
+        const z = Math.random();
+        particulas.push({
+          x: Math.random() * ancho,
+          y: Math.random() * alto,
+          z: z,
+          r: 1.1 + z * 3.4,
+          a: 0.1 + Math.random() * 0.24,
+          vx: (Math.random() - 0.5) * 5,
+          vy: -(3 + Math.random() * 9),
+          fase: Math.random() * Math.PI * 2,
+          ritmo: 0.5 + Math.random() * 1.1,
+          sprite: i % sprites.length,
+        });
+      }
+    }
+
+    function medir() {
+      const nuevoAncho = window.innerWidth;
+      const nuevoAlto = window.innerHeight;
+      /* En móvil la barra del navegador cambia de alto al hacer scroll:
+         se ignoran esas variaciones para no redibujar en cada gesto */
+      if (nuevoAncho === ancho && Math.abs(nuevoAlto - alto) < 90) return;
+      ancho = nuevoAncho;
+      alto = nuevoAlto;
+      vw = nuevoAncho;
+      vh = nuevoAlto;
+      const dpr = Math.min(window.devicePixelRatio || 1, PERFILES[nombrePerfil()].dpr);
+      canvas.width = Math.max(1, Math.round(ancho * dpr));
+      canvas.height = Math.max(1, Math.round(alto * dpr));
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      crearParticulas();
+    }
+
+    function dibujar(paso) {
+      ctx.clearRect(0, 0, ancho, alto);
+      ctx.globalCompositeOperation = 'lighter';
+      for (let i = 0; i < particulas.length; i++) {
+        const p = particulas[i];
+        const centelleo = 0.55 + 0.45 * Math.sin(tiempo * p.ritmo + p.fase);
+        const x = p.x + Math.sin(tiempo * 0.22 + p.fase) * 9 * (0.3 + p.z);
+        const radio = p.r * (0.7 + p.z * 0.6);
+        ctx.globalAlpha = p.a * centelleo;
+        ctx.drawImage(sprites[p.sprite], x - radio, p.y - radio, radio * 2, radio * 2);
+        if (paso > 0) {
+          p.x += p.vx * paso;
+          p.y += p.vy * paso;
+          if (p.y < -12) {
+            p.y = alto + 12;
+            p.x = Math.random() * ancho;
+          } else if (p.x < -12) {
+            p.x = ancho + 12;
+          } else if (p.x > ancho + 12) {
+            p.x = -12;
+          }
+        }
+      }
+      ctx.globalAlpha = 1;
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    /* El fotograma lo pide ahora el reloj compartido de la escena: el
+       fondo se suscribe con su callback.
+       El cuerpo de la función es idéntico al que tenía antes. */
+    relojEscena.suscribir(function (segundos) {
+      tiempo += segundos;
+
+      bx += (objetivoBx - bx) * 0.05;
+      by += (objetivoBy - by) * 0.05;
+      const nuevoBx = bx.toFixed(3);
+      const nuevoBy = by.toFixed(3);
+      if (nuevoBx !== ultimoBx || nuevoBy !== ultimoBy) {
+        ultimoBx = nuevoBx;
+        ultimoBy = nuevoBy;
+        capa.style.setProperty('--bx', nuevoBx);
+        capa.style.setProperty('--by', nuevoBy);
+      }
+      dibujar(segundos);
+    });
+
+    function arrancar() {
+      if (relojEscena.activo() || MQ_MOVIMIENTO.matches || document.hidden) return;
+      relojEscena.arrancar();
+    }
+
+    function parar() {
+      relojEscena.parar();
+    }
+
+    /* Parallax: solo escritorio con puntero fino, y sin leer el layout */
+    function apuntar(e) {
+      objetivoBx = (e.clientX / (vw || 1)) * 2 - 1;
+      objetivoBy = (e.clientY / (vh || 1)) * 2 - 1;
+      punteroEscena.x = objetivoBx;
+      punteroEscena.y = objetivoBy;
+    }
+    function soltar() {
+      objetivoBx = 0;
+      objetivoBy = 0;
+      punteroEscena.x = 0;
+      punteroEscena.y = 0;
+    }
+    function conectarPuntero(conectar) {
+      const opciones = { passive: true };
+      if (conectar) {
+        window.addEventListener('pointermove', apuntar, opciones);
+        document.addEventListener('mouseleave', soltar, opciones);
+        window.addEventListener('blur', soltar, opciones);
+      } else {
+        window.removeEventListener('pointermove', apuntar, opciones);
+        document.removeEventListener('mouseleave', soltar, opciones);
+        window.removeEventListener('blur', soltar, opciones);
+        soltar();
+      }
+    }
+    conectarPuntero(MQ_PUNTERO_FINO.matches);
+    if (typeof MQ_PUNTERO_FINO.addEventListener === 'function') {
+      MQ_PUNTERO_FINO.addEventListener('change', (e) => conectarPuntero(e.matches));
+    }
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) parar();
+      else arrancar();
+    });
+
+    function alCambiarMovimiento() {
+      if (MQ_MOVIMIENTO.matches) {
+        parar();
+        bx = 0;
+        by = 0;
+        objetivoBx = 0;
+        objetivoBy = 0;
+        capa.style.setProperty('--bx', '0');
+        capa.style.setProperty('--by', '0');
+        dibujar(0);
+      } else {
+        arrancar();
+      }
+    }
+    if (typeof MQ_MOVIMIENTO.addEventListener === 'function') {
+      MQ_MOVIMIENTO.addEventListener('change', alCambiarMovimiento);
+    }
+
+    window.addEventListener(
+      'resize',
+      () => {
+        clearTimeout(temporizadorMedida);
+        temporizadorMedida = setTimeout(medir, 180);
+      },
+      { passive: true }
+    );
+
+    function alCambiarPerfil() {
+      ancho = 0;
+      alto = 0;
+      medir();
+      dibujar(0);
+    }
+    [MQ_ESCRITORIO, MQ_TABLET, MQ_MOVIL].forEach((mq) => {
+      if (typeof mq.addEventListener === 'function') mq.addEventListener('change', alCambiarPerfil);
+    });
+
+    capa.style.setProperty('--bx', '0');
+    capa.style.setProperty('--by', '0');
+    medir();
+    if (MQ_MOVIMIENTO.matches) dibujar(0);
+    else arrancar();
+  }
 })();

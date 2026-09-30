@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es" class="scroll-smooth">
 <head>
   <meta charset="UTF-8" />
@@ -16,10 +16,10 @@
   <!-- Font Awesome Icons (CDN) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-  <!-- Google Fonts: Instrument Serif, Plus Jakarta Sans, JetBrains Mono -->
+  <!-- Google Fonts: Instrument Serif, Plus Jakarta Sans, JetBrains Mono, Playfair Display -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
 
   <!-- Estilos personalizados -->
   <link rel="stylesheet" href="styles.css" />
@@ -30,6 +30,31 @@
 </head>
 
 <body class="bg-[#0B0A0C] text-[#F3EFEA] antialiased">
+
+  <!-- ============ FONDO 3D (capa decorativa, detrás de todo el contenido) ============ -->
+  <div class="background-3d" aria-hidden="true">
+    <div class="background-3d-escena">
+      <div class="fondo-3d-plano fondo-3d-lejano">
+        <span class="seda-lejana seda-lejana-a"></span>
+        <span class="seda-lejana seda-lejana-b"></span>
+      </div>
+      <div class="fondo-3d-plano fondo-3d-medio">
+        <span class="seda seda-a"></span>
+        <span class="seda seda-b"></span>
+        <span class="seda seda-c"></span>
+      </div>
+      <div class="fondo-3d-plano fondo-3d-cercano">
+        <span class="geo geo-rejilla"></span>
+        <span class="geo geo-anillo"></span>
+        <span class="geo geo-anillo-b"></span>
+        <span class="geo geo-arco"></span>
+        <span class="geo geo-barra"></span>
+        <span class="geo geo-barra-b"></span>
+      </div>
+    </div>
+    <canvas class="fondo-3d-particulas"></canvas>
+    <div class="fondo-3d-vineta"></div>
+  </div>
 
   <!-- ============ A. HEADER / NAVEGACIÓN (STICKY) ============ -->
   <header id="navbar" class="sticky top-0 z-50 bg-[#0B0A0C]/80 backdrop-blur-md border-b border-white/10">
@@ -101,7 +126,7 @@
     </section>
 
     <!-- ============ C. SOBRE MÍ ============ -->
-    <section id="sobre-mi" class="py-20 bg-[#100E12]">
+    <section id="sobre-mi" class="py-20 bg-[#100E12]/80">
       <div class="max-w-6xl mx-auto px-5">
         <div class="mb-10">
           <h2 class="section-heading">Sobre Mí</h2>
@@ -209,24 +234,58 @@
       </div>
     </section>
 
-    <!-- ============ D. PROYECTOS (INTERACTIVA CON FILTROS) ============ -->
-    <section id="proyectos" class="py-20 bg-[#100E12]">
-      <div class="max-w-6xl mx-auto px-5">
-        <div class="mb-10">
-          <h2 class="section-heading">Proyectos</h2>
-          <div class="heading-line"></div>
+    <!-- ============ D. GALERÍA DE PROYECTOS (3D EN FORMA DE ONDA) ============ -->
+    <section id="proyectos" class="py-20 bg-[#100E12]/80">
+      <div class="galeria-bloque">
+
+        <!-- Título de la galería -->
+        <h2 class="galeria-titulo">Galería de proyectos</h2>
+
+        <!-- Fila de filtros + interruptor de modo rejilla -->
+        <div class="galeria-barra">
+          <div id="galeria-filtros" class="galeria-filtros" role="group" aria-label="Filtrar proyectos por categoría">
+            <button type="button" class="filter-btn active" data-filter="todos">Todos</button>
+            <button type="button" class="filter-btn" data-filter="fullstack">Full-stack</button>
+            <button type="button" class="filter-btn" data-filter="webgl">WebGL</button>
+            <button type="button" class="filter-btn" data-filter="sistemas">Sistemas</button>
+            <button type="button" class="filter-btn" data-filter="ecologicos">Ecológicos</button>
+          </div>
+
+          <label class="galeria-modo" for="galeria-modo-rejilla">
+            <span class="galeria-modo-texto">Modo rejilla (2D)</span>
+            <input type="checkbox" id="galeria-modo-rejilla" class="galeria-modo-input" role="switch" />
+            <span class="galeria-modo-pista" aria-hidden="true"><span class="galeria-modo-boton"></span></span>
+          </label>
         </div>
 
-        <!-- Barra de filtros -->
-        <div id="filters" class="flex flex-wrap justify-center gap-3 mb-12">
-          <button class="filter-btn active" data-filter="todos">Todos</button>
-          <button class="filter-btn" data-filter="listo">🟢 Listo</button>
-          <button class="filter-btn" data-filter="desarrollo">🟡 En Desarrollo</button>
-          <button class="filter-btn" data-filter="web">Web / Full Stack</button>
+        <!-- Contenedor de tarjetas (la onda se calcula en main.js) -->
+        <div id="galeria-tarjetas" class="galeria-onda"></div>
+
+        <p id="galeria-pista" class="galeria-pista" hidden>
+          <i class="fa-solid fa-arrows-left-right" aria-hidden="true"></i>
+          <span>Desliza para recorrer la galería</span>
+        </p>
+
+        <!-- Panel de detalles -->
+        <div id="galeria-detalles" class="galeria-detalles hidden" role="dialog" aria-modal="false" aria-labelledby="galeria-detalles-nombre">
+          <button type="button" id="galeria-detalles-cerrar-x" class="galeria-detalles-x" aria-label="Cerrar detalles">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+          <h3 id="galeria-detalles-nombre" class="galeria-detalles-nombre"></h3>
+          <p id="galeria-detalles-descripcion" class="galeria-detalles-descripcion"></p>
+          <div class="galeria-detalles-acciones">
+            <a id="galeria-btn-demo" class="galeria-btn galeria-btn-demo" href="#" target="_blank" rel="noopener">
+              <i class="fa-solid fa-arrow-up-right-from-square"></i> Ver demo live
+            </a>
+            <a id="galeria-btn-codigo" class="galeria-btn galeria-btn-codigo" href="#" target="_blank" rel="noopener">
+              <i class="fa-brands fa-github"></i> Ver código GitHub
+            </a>
+            <button type="button" id="galeria-btn-cerrar" class="galeria-btn galeria-btn-cerrar">
+              <i class="fa-solid fa-xmark"></i> Cerrar detalles
+            </button>
+          </div>
         </div>
 
-        <!-- Grilla de proyectos -->
-        <div id="projects-grid" class="grid md:grid-cols-2 gap-6"></div>
       </div>
     </section>
 
@@ -239,7 +298,7 @@
     </section>
 
     <!-- ============ TESTIMONIOS ============ -->
-    <section id="testimonios" class="py-20 bg-[#100E12] hidden">
+    <section id="testimonios" class="py-20 bg-[#100E12]/80 hidden">
       <div class="max-w-6xl mx-auto px-5">
         <div class="mb-10"><h2 class="section-heading">Testimonios</h2></div>
         <div id="testi-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
@@ -321,7 +380,7 @@
   </main>
 
   <!-- ============ E. FOOTER ============ -->
-  <footer class="border-t border-white/10 bg-[#0B0A0C] py-8">
+  <footer class="border-t border-white/10 bg-[#0B0A0C]/85 py-8">
     <div class="max-w-6xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
       <p class="text-sm text-[#6E6674]">
         © <span id="year"></span> Yohana Franceschi. Todos los derechos reservados.
