@@ -51,7 +51,12 @@
             <button onclick="showTab('tab-curriculum', event)" class="tab-btn">
                 <i class="fas fa-file-arrow-down"></i> Curriculum
             </button>
+            <button onclick="showTab('tab-mensajes', event)" class="tab-btn">
+                <i class="fas fa-envelope"></i> Mensajes
+            </button>
     </nav>
+
+    <div id="admin-msg" class="admin-msg" role="alert"></div>
 
     <section id="tab-proyectos" class="tab-content active">
       <div class="admin-grid">
@@ -281,6 +286,15 @@
           </div>
           <button type="submit" class="btn-primary">Subir Curriculum</button>
         </form>
+      </div>
+    </section>
+
+        <section id="tab-mensajes" class="tab-content">
+      <div class="admin-card max-w-800">
+        <div class="card-header">
+          <h3><i class="fas fa-inbox"></i> Mensajes Recibidos</h3>
+        </div>
+        <div id="lista-mensajes" class="admin-list-container"></div>
       </div>
     </section>
   </main>

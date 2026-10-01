@@ -128,6 +128,21 @@
 
     .back-link:hover { color: var(--primary); }
 
+    .login-container .login-error {
+      display: none;
+      margin: 12px 0 0;
+      color: #f87171;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    .login-container .login-error.visible { display: block; }
+
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -143,6 +158,7 @@
       <input type="email" id="email" placeholder="Correo electr&oacute;nico" required autocomplete="email">
       <input type="password" id="password" placeholder="Contrase&ntilde;a" required autocomplete="current-password">
       <button type="submit" class="btn-login">Entrar al Dashboard</button>
+      <p id="login-error" class="login-error" role="alert"></p>
     </form>
     <a href="index.html" class="back-link">&larr; Volver al sitio</a>
   </div>

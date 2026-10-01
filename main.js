@@ -603,8 +603,19 @@
         const el = document.getElementById(id);
         if (el && val) el.textContent = val;
       };
+      set('about-title', data.titulo);
       set('about-desc1', data.descripcion_1);
       set('about-desc2', data.descripcion_2);
+
+      const listaEl = document.getElementById('about-lista');
+      if (listaEl && data.lista) {
+        listaEl.innerHTML = data.lista
+          .split(',')
+          .map((t) => t.trim())
+          .filter(Boolean)
+          .map((t) => `<span class="tech-badge">${esc(t)}</span>`)
+          .join('');
+      }
 
       const photo = document.getElementById('hero-photo');
       if (photo && data.imagen) photo.src = data.imagen;
@@ -613,6 +624,51 @@
     }
   }
   cargarSobreMiDesdeBD();
+
+  /* Contacto (email, GitHub, LinkedIn) desde Supabase */
+  async function cargarContactoDesdeBD() {
+    if (!window._supabase) return;
+    try {
+      const { data, error } = await window._supabase
+        .from('perfil')
+        .select('email, github, linkedin')
+        .eq('id', 1)
+        .single();
+      if (error || !data) return;
+
+      const email = (data.email || '').trim();
+      const github = (data.github || '').trim();
+      const linkedin = (data.linkedin || '').trim();
+
+      const actualizarTarjetaSocial = (titulo, href, etiqueta) => {
+        document.querySelectorAll('#contacto .info-card').forEach((card) => {
+          const tituloEl = card.querySelector('p.font-semibold');
+          if (tituloEl && tituloEl.textContent.trim() === titulo) {
+            card.href = href;
+            const sub = card.querySelector('p.text-sm');
+            if (sub) sub.textContent = etiqueta;
+          }
+        });
+      };
+
+      if (email) {
+        document.querySelectorAll('a[href^="mailto:"]').forEach((a) => { a.href = 'mailto:' + email; });
+        actualizarTarjetaSocial('Correo', 'mailto:' + email, email);
+      }
+      if (github) {
+        document.querySelectorAll('a[href*="github.com/"]').forEach((a) => { a.href = github; });
+        actualizarTarjetaSocial('GitHub', github, github.replace(/^https?:\/\/(www\.)?/, ''));
+      }
+      if (linkedin) {
+        document.querySelectorAll('a[href*="linkedin.com/in/"]').forEach((a) => { a.href = linkedin; });
+        const ultima = linkedin.split('/').filter(Boolean).pop();
+        actualizarTarjetaSocial('LinkedIn', linkedin, ultima ? 'in/' + ultima : linkedin);
+      }
+    } catch (e) {
+      /* Mantiene los enlaces estáticos si la BD falla */
+    }
+  }
+  cargarContactoDesdeBD();
 
   /* --------------------------------------------------------
      4. SCROLL SUAVE (fallback para navegadores)
