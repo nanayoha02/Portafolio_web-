@@ -16,13 +16,16 @@
   <!-- Font Awesome Icons (CDN) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
 
-  <!-- Google Fonts: Instrument Serif, Plus Jakarta Sans, JetBrains Mono, Playfair Display -->
+  <!-- Google Fonts: Instrument Serif, Plus Jakarta Sans, JetBrains Mono, Playfair Display, Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Plus+Jakarta+Sans:wght@300;400;500;700&family=JetBrains+Mono:wght@400&family=Playfair+Display:wght@700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
   <!-- Estilos personalizados -->
   <link rel="stylesheet" href="styles.css" />
+
+  <!-- Estilos bento: Habilidades, Certificaciones y Testimonios -->
+  <link rel="stylesheet" href="css/bento-secciones.css" />
 
   <!-- Supabase (para cargar el CV desde el panel admin) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -177,60 +180,33 @@
       </div>
     </section>
 
-    <!-- ============ C. HABILIDADES TÉCNICAS ============ -->
-    <section id="habilidades" class="py-20">
-      <div class="max-w-6xl mx-auto px-5">
-        <div class="mb-10">
-          <h2 class="section-heading">Habilidades Técnicas</h2>
-          <div class="heading-line"></div>
+<!-- ============ BENTO: HABILIDADES + CERTIFICACIONES + TESTIMONIOS ============ -->
+    <section class="bento-section" id="habilidades">
+      <div class="section-header">
+        <span class="section-tag">Conoce mi perfil</span>
+        <h2 class="section-title">Habilidades &amp; Trayectoria</h2>
+      </div>
+
+      <div class="bento-grid">
+        <div class="bento-card bento-dark card-skills">
+          <div class="skills-header">
+            <h3>Habilidades Técnicas</h3>
+          </div>
+
+          <div class="skills-categories" id="skills-tabs" aria-label="Filtrar por categoría"></div>
+
+          <div class="skills-container" id="skills-grid"></div>
         </div>
 
-        <div id="skills-grid" class="grid md:grid-cols-3 gap-6">
-          <!-- Frontend -->
-          <div class="skill-card">
-            <div class="flex items-center gap-3 mb-6">
-              <span class="w-10 h-10 rounded-lg bg-[#8B263E]/25 text-[#C4506B] flex items-center justify-center"><i class="fa-solid fa-code"></i></span>
-              <h3 class="text-lg font-bold text-white">Frontend</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="tech-badge"><i class="fa-brands fa-html5 text-orange-500"></i> HTML5</span>
-              <span class="tech-badge"><i class="fa-brands fa-css3-alt text-blue-500"></i> CSS3</span>
-              <span class="tech-badge"><i class="fa-brands fa-js text-yellow-400"></i> JavaScript</span>
-              <span class="tech-badge"><i class="fa-brands fa-react text-cyan-400"></i> React</span>
-              <span class="tech-badge"><i class="fa-brands fa-css3 text-teal-400"></i> Tailwind CSS</span>
-            </div>
-          </div>
+        <div class="bento-card bento-light card-certifications" id="certificaciones">
+          <h3>Certificaciones</h3>
+          <p>Acreditaciones y formación continua</p>
+          <div class="cert-list" id="cert-grid"></div>
+        </div>
 
-          <!-- Backend & BD -->
-          <div class="skill-card">
-            <div class="flex items-center gap-3 mb-6">
-              <span class="w-10 h-10 rounded-lg bg-[#8B263E]/25 text-[#C4506B] flex items-center justify-center"><i class="fa-solid fa-server"></i></span>
-              <h3 class="text-lg font-bold text-white">Backend & BD</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="tech-badge"><i class="fa-brands fa-node-js text-emerald-400"></i> Node.js</span>
-              <span class="tech-badge"><i class="fa-solid fa-bolt text-[#D8D0D8]"></i> Express</span>
-              <span class="tech-badge"><i class="fa-brands fa-python text-blue-400"></i> Python</span>
-              <span class="tech-badge"><i class="fa-solid fa-database text-sky-400"></i> PostgreSQL</span>
-              <span class="tech-badge"><i class="fa-solid fa-database text-orange-400"></i> MySQL</span>
-              <span class="tech-badge"><i class="fa-solid fa-plug text-[#D8D0D8]"></i> APIs REST</span>
-            </div>
-          </div>
-
-          <!-- Herramientas -->
-          <div class="skill-card">
-            <div class="flex items-center gap-3 mb-6">
-              <span class="w-10 h-10 rounded-lg bg-[#8B263E]/25 text-[#C4506B] flex items-center justify-center"><i class="fa-solid fa-screwdriver-wrench"></i></span>
-              <h3 class="text-lg font-bold text-white">Herramientas</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <span class="tech-badge"><i class="fa-brands fa-git-alt text-orange-400"></i> Git</span>
-              <span class="tech-badge"><i class="fa-brands fa-github text-[#F3EFEA]"></i> GitHub</span>
-              <span class="tech-badge"><i class="fa-solid fa-code text-blue-400"></i> VS Code</span>
-              <span class="tech-badge"><i class="fa-brands fa-figma text-purple-400"></i> Figma</span>
-              <span class="tech-badge"><i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> UI/UX Design</span>
-            </div>
-          </div>
+        <div class="bento-card bento-dark card-testimonials" id="testimonios">
+          <h3>Testimonios &amp; Recomendaciones</h3>
+          <div id="testi-grid"></div>
         </div>
       </div>
     </section>
@@ -287,22 +263,6 @@
           </div>
         </div>
 
-      </div>
-    </section>
-
-    <!-- ============ CERTIFICACIONES ============ -->
-    <section id="certificaciones" class="py-20 hidden">
-      <div class="max-w-6xl mx-auto px-5">
-        <div class="mb-10"><h2 class="section-heading">Certificaciones</h2></div>
-        <div id="cert-grid" class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-      </div>
-    </section>
-
-    <!-- ============ TESTIMONIOS ============ -->
-    <section id="testimonios" class="py-20 bg-[#100E12]/80 hidden">
-      <div class="max-w-6xl mx-auto px-5">
-        <div class="mb-10"><h2 class="section-heading">Testimonios</h2></div>
-        <div id="testi-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
       </div>
     </section>
 

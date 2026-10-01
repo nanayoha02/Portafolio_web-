@@ -548,42 +548,86 @@
   }
   cargarProyectosDesdeBD();
 
-  /* Habilidades desde Supabase (agrupadas por categoría) */
+  /* Habilidades desde Supabase (items + pestañas por categoría) */
+  function normalizarPorcentaje(valor) {
+    const n = Number(valor);
+    if (!isFinite(n)) return 0;
+    return Math.min(100, Math.max(0, Math.round(n)));
+  }
+
+  function pintarMensajeDiscreto(contenedor) {
+    if (!contenedor) return;
+    contenedor.innerHTML = '<p class="text-sm opacity-60">Próximamente</p>';
+  }
+
+  function montarPestanasCategorias(contenedorTabs, contenedorSkills, categorias) {
+    if (!contenedorTabs) return;
+
+    contenedorTabs.innerHTML = ['Todas']
+      .concat(categorias)
+      .map(
+        (cat, i) =>
+          `<button type="button" class="skill-tab${i === 0 ? ' active' : ''}" data-filtro="${esc(cat)}">${esc(cat)}</button>`
+      )
+      .join('');
+
+    const items = contenedorSkills.querySelectorAll('.skill-item');
+
+    contenedorTabs.querySelectorAll('.skill-tab').forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const filtro = tab.dataset.filtro || '';
+        contenedorTabs.querySelectorAll('.skill-tab').forEach((t) => {
+          t.classList.toggle('active', t === tab);
+        });
+        items.forEach((item) => {
+          const coincide = filtro === '' || item.dataset.categoria === filtro;
+          item.style.display = coincide ? '' : 'none';
+        });
+      });
+    });
+  }
+
   async function cargarHabilidadesDesdeBD() {
-    const container = document.getElementById('skills-grid');
-    if (!container || !window._supabase) return;
+    const contenedorSkills = document.getElementById('skills-grid');
+    const contenedorTabs = document.getElementById('skills-tabs');
+    if (!contenedorSkills || !window._supabase) return;
+
+    if (contenedorTabs) contenedorTabs.innerHTML = '';
+
     try {
       const { data, error } = await window._supabase
         .from('habilidades')
         .select('*')
         .order('categoria');
-      if (error || !data || !data.length) return;
 
-      const grupos = {};
-      data.forEach((h) => {
-        const cat = h.categoria || 'Otros';
-        if (!grupos[cat]) grupos[cat] = [];
-        grupos[cat].push(h);
-      });
+      if (error || !data || !data.length) {
+        pintarMensajeDiscreto(contenedorSkills);
+        return;
+      }
 
-      container.innerHTML = Object.entries(grupos)
-        .map(([cat, items]) => `
-          <div class="skill-card">
-            <div class="flex items-center gap-3 mb-6">
-              <span class="w-10 h-10 rounded-lg bg-[#8B263E]/25 text-[#C4506B] flex items-center justify-center"><i class="fa-solid fa-code"></i></span>
-              <h3 class="text-lg font-bold text-white">${cat}</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              ${items
-                .map(
-                  (h) => `<span class="tech-badge"><i class="${h.icono || 'fa-solid fa-code'}"></i> ${h.nombre}${h.porcentaje != null ? ` <span class="opacity-70">${h.porcentaje}%</span>` : ''}</span>`
-                )
-                .join('')}
-            </div>
-          </div>`)
+      contenedorSkills.innerHTML = data
+        .map((h) => {
+          const porcentaje = normalizarPorcentaje(h.porcentaje);
+          const categoria = h.categoria == null ? '' : String(h.categoria).trim();
+          return `
+            <div class="skill-item" data-categoria="${esc(categoria)}">
+              <div class="skill-icon"><i class="${esc(h.icono || 'fas fa-code')}"></i></div>
+              <div class="skill-info">
+                <h4>${esc(h.nombre)}</h4>
+                <div class="skill-bar"><div class="skill-progress" style="width:${porcentaje}%"></div></div>
+              </div>
+            </div>`;
+        })
         .join('');
+
+      const categorias = [];
+      data.forEach((h) => {
+        const cat = h.categoria == null ? '' : String(h.categoria).trim();
+        if (cat && categorias.indexOf(cat) === -1) categorias.push(cat);
+      });
+      montarPestanasCategorias(contenedorTabs, contenedorSkills, categorias);
     } catch (e) {
-      /* Mantiene las habilidades estáticas si la BD falla */
+      pintarMensajeDiscreto(contenedorSkills);
     }
   }
   cargarHabilidadesDesdeBD();
@@ -850,31 +894,76 @@
     });
   }
 
-  /* --------------------------------------------------------
+/* --------------------------------------------------------
      11. CERTIFICACIONES Y TESTIMONIOS desde Supabase
-         (la sección solo aparece si hay datos)
-  -------------------------------------------------------- */
+         (toleran que las tablas no existan)
+-------------------------------------------------------- */
   async function cargarCertificacionesYTestimonios() {
     if (!window._supabase) return;
-    try {
-      const cert = await window._supabase.from('certificaciones').select('*').order('created_at', { ascending: false });
-      if (!cert.error && cert.data && cert.data.length) {
-        document.getElementById('cert-grid').innerHTML = cert.data.map((c) => {
-          const icono = /^[\w\- ]+$/.test(c.icono || '') ? c.icono : 'fas fa-certificate';
-          return `<div class="info-card"><i class="${icono} text-[#C4506B]"></i><div><p class="font-semibold text-white">${esc(c.nombre)}</p><p class="text-sm text-[#A098A8]">${esc(c.emisor)}${c.anio ? ' · ' + esc(c.anio) : ''}</p></div></div>`;
-        }).join('');
-        document.getElementById('certificaciones').classList.remove('hidden');
+
+    const certGrid = document.getElementById('cert-grid');
+    const testiGrid = document.getElementById('testi-grid');
+
+    if (certGrid) {
+      try {
+        const { data, error } = await window._supabase
+          .from('certificaciones')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error || !data || !data.length) {
+          pintarMensajeDiscreto(certGrid);
+        } else {
+          certGrid.innerHTML = data
+            .map(
+              (c) => `
+              <div class="cert-card">
+                <i class="${esc(c.icono || 'fa-solid fa-certificate')} cert-icon"></i>
+                <div class="cert-details">
+                  <h4>${esc(c.nombre)}</h4>
+                  <p>${esc(c.emisor)} • ${esc(c.anio)}</p>
+                </div>
+              </div>`
+            )
+            .join('');
+        }
+      } catch (e) {
+        pintarMensajeDiscreto(certGrid);
       }
-      const tes = await window._supabase.from('testimonios').select('*').order('created_at', { ascending: false });
-      if (!tes.error && tes.data && tes.data.length) {
-        document.getElementById('testi-grid').innerHTML = tes.data.map((t) => {
-          const avatar = t.avatar_url ? `<img src="${esc(t.avatar_url)}" alt="" class="w-10 h-10 rounded-full object-cover" loading="lazy" />` : '';
-          return `<figure class="glass-card flex flex-col gap-5"><blockquote class="testi-quote">“${esc(t.texto)}”</blockquote><figcaption class="flex items-center gap-3">${avatar}<div><p class="font-semibold text-white">${esc(t.nombre)}</p><p class="text-sm text-[#A098A8]">${esc(t.rol)}</p></div></figcaption></figure>`;
-        }).join('');
-        document.getElementById('testimonios').classList.remove('hidden');
+    }
+
+    if (testiGrid) {
+      try {
+        const { data, error } = await window._supabase
+          .from('testimonios')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error || !data || !data.length) {
+          pintarMensajeDiscreto(testiGrid);
+        } else {
+          testiGrid.innerHTML = data
+            .map((t) => {
+              const avatar = t.avatar_url
+                ? `<img class="user-img" src="${esc(t.avatar_url)}" alt="" loading="lazy" />`
+                : '';
+              return `
+              <div class="testimonial-bubble">
+                <div class="testimonial-user">
+                  ${avatar}
+                  <div class="user-info">
+                    <h4>${esc(t.nombre)}</h4>
+                    <span>${esc(t.rol)}</span>
+                  </div>
+                </div>
+                <p class="testimonial-text">"${esc(t.texto)}"</p>
+              </div>`;
+            })
+            .join('');
+        }
+      } catch (e) {
+        pintarMensajeDiscreto(testiGrid);
       }
-    } catch (e) {
-      /* Si falla, las secciones siguen ocultas */
     }
   }
   cargarCertificacionesYTestimonios();

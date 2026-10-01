@@ -1,0 +1,252 @@
+/* Estilos: Habilidades, Certificaciones y Testimonios (todo dentro de .bento-section) */
+
+.bento-section {
+  --bento-bg: #2e0509;
+  --bento-card-dark: #3d0a11;
+  --bento-card-light: #fff5ee;
+  --bento-accent-rose: #e07a8b;
+  --bento-accent-red: #b8324f;
+  --text-light: #fff5ee;
+  --text-dark: #2e0509;
+  --text-muted: #d4a3ad;
+  --radius-large: 36px;
+  --radius-medium: 24px;
+  --radius-pill: 999px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bento-section {
+  padding: 80px 8%;
+  background-color: var(--bento-bg);
+  border-radius: 48px 48px 0 0;
+  margin-top: 40px;
+  box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.5);
+  position: relative;
+}
+
+.bento-section .section-header { text-align: center; margin-bottom: 50px; }
+
+.bento-section .section-tag {
+  background: var(--bento-accent-red);
+  color: var(--text-light);
+  padding: 6px 18px;
+  border-radius: var(--radius-pill);
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+.bento-section .section-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.5rem;
+  color: var(--text-light);
+}
+
+.bento-section .bento-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 24px;
+  max-width: 1300px;
+  margin: 0 auto;
+}
+
+.bento-section .bento-card {
+  border-radius: var(--radius-large);
+  padding: 28px;
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.bento-section .bento-card:hover { transform: translateY(-5px); }
+
+.bento-section .bento-dark {
+  background-color: var(--bento-card-dark);
+  color: var(--text-light);
+  border: 1px solid rgba(224, 122, 139, 0.15);
+}
+
+.bento-section .bento-light {
+  background-color: var(--bento-card-light);
+  color: var(--text-dark);
+}
+
+/* HABILIDADES */
+.bento-section .card-skills { grid-column: span 8; }
+
+.bento-section .skills-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.bento-section .skills-categories {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.bento-section .skill-tab {
+  padding: 8px 18px;
+  border-radius: var(--radius-pill);
+  background: rgba(255, 245, 238, 0.1);
+  color: var(--text-light);
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.bento-section .skill-tab.active,
+.bento-section .skill-tab:hover {
+  background: var(--bento-accent-rose);
+  color: var(--text-dark);
+}
+
+.bento-section .skills-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.bento-section .skill-item {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 16px 20px;
+  border-radius: var(--radius-medium);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.bento-section .skill-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: var(--radius-medium);
+  background: var(--bento-accent-red);
+  color: var(--text-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.bento-section .skill-info { flex: 1; }
+.bento-section .skill-info h4 { font-size: 1rem; margin-bottom: 4px; }
+
+.bento-section .skill-bar {
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-pill);
+  overflow: hidden;
+}
+
+.bento-section .skill-progress {
+  height: 100%;
+  background: var(--bento-accent-rose);
+  border-radius: var(--radius-pill);
+}
+
+/* CERTIFICACIONES */
+.bento-section .card-certifications { grid-column: span 5; }
+
+.bento-section .cert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.bento-section .cert-card {
+  background: #ffffff;
+  padding: 16px;
+  border-radius: var(--radius-medium);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.bento-section .cert-icon { font-size: 1.8rem; color: var(--bento-accent-red); }
+.bento-section .cert-details h4 { font-size: 0.95rem; color: var(--text-dark); font-weight: 700; }
+.bento-section .cert-details p { font-size: 0.8rem; color: #666; }
+
+/* TESTIMONIOS */
+.bento-section .card-testimonials { grid-column: span 7; }
+
+.bento-section .testimonial-bubble {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: var(--radius-medium);
+  padding: 20px;
+  margin-top: 16px;
+  position: relative;
+}
+
+.bento-section .testimonial-user {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.bento-section .user-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.bento-section .user-info h4 { font-size: 1rem; font-weight: 700; }
+.bento-section .user-info span { font-size: 0.8rem; color: var(--bento-accent-rose); }
+
+.bento-section .testimonial-text {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.bento-section .testimonial-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+}
+
+.bento-section .like-btn {
+  background: var(--bento-card-dark);
+  border: 1px solid rgba(224, 122, 139, 0.3);
+  color: var(--bento-accent-rose);
+  padding: 6px 16px;
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+
+.bento-section .like-btn:hover {
+  background: var(--bento-accent-red);
+  color: var(--text-light);
+}
+
+/* RESPONSIVO */
+@media (max-width: 992px) {
+  .bento-section .card-skills,
+  .bento-section .card-certifications,
+  .bento-section .card-testimonials { grid-column: span 12; }
+
+  .bento-section .skills-container { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .bento-section { padding: 56px 5%; }
+  .bento-section .section-title { font-size: 2rem; }
+}
