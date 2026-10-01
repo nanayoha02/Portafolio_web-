@@ -892,7 +892,7 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
-  background-color: #0B0A0C;
+  background-color: transparent;
   /* Iluminación base: brillos vino muy difusos, nunca compiten con el texto */
   background-image:
     radial-gradient(58vmax 46vmax at 18% 12%, rgba(139, 38, 62, .15), transparent 68%),
@@ -1117,4 +1117,29 @@ body { font-family: 'Plus Jakarta Sans', system-ui, sans-serif; }
   .fondo-3d-particulas { animation: none !important; transition: none !important; }
   .background-3d-escena,
   .fondo-3d-particulas { transform: none !important; }
+}
+
+/* ============================================================
+   FONDO GLOBAL DEL SITIO
+   Capa fija con la imagen de fondo. Se usa un pseudo-elemento
+   en vez de background-attachment: fixed porque fixed no
+   funciona correctamente en iOS ni en navegadores moviles.
+   ============================================================ */
+body {
+  position: relative;
+  background-color: #0B0A0C;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(rgba(11, 10, 12, 0.55), rgba(11, 10, 12, 0.55)),
+    url("img/fondo-portafolio.png");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
 }
